@@ -42,6 +42,16 @@ namespace Azure.AI.Projects
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InputFileContentParam>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InputFileContentParam IPersistableModel<InputFileContentParam>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InputFileContentParam>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InputFileContentParam>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -77,10 +87,10 @@ namespace Azure.AI.Projects
                 writer.WritePropertyName("file_data"u8);
                 writer.WriteStringValue(FileData);
             }
-            if (Optional.IsDefined(FileUrl))
+            if (Optional.IsDefined(FileUri))
             {
                 writer.WritePropertyName("file_url"u8);
-                writer.WriteStringValue(FileUrl.AbsoluteUri);
+                writer.WriteStringValue(FileUri.AbsoluteUri);
             }
             if (options.Format != "W" && _additionalBinaryDataProperties != null)
             {
@@ -128,7 +138,7 @@ namespace Azure.AI.Projects
             string fileId = default;
             string filename = default;
             string fileData = default;
-            Uri fileUrl = default;
+            Uri fileUri = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             foreach (var prop in element.EnumerateObject())
             {
@@ -171,10 +181,10 @@ namespace Azure.AI.Projects
                 {
                     if (prop.Value.ValueKind == JsonValueKind.Null)
                     {
-                        fileUrl = null;
+                        fileUri = null;
                         continue;
                     }
-                    fileUrl = string.IsNullOrEmpty(prop.Value.GetString()) ? null : new Uri(prop.Value.GetString());
+                    fileUri = string.IsNullOrEmpty(prop.Value.GetString()) ? null : new Uri(prop.Value.GetString(), UriKind.RelativeOrAbsolute);
                     continue;
                 }
                 if (options.Format != "W")
@@ -187,18 +197,8 @@ namespace Azure.AI.Projects
                 fileId,
                 filename,
                 fileData,
-                fileUrl,
+                fileUri,
                 additionalBinaryDataProperties);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InputFileContentParam>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InputFileContentParam IPersistableModel<InputFileContentParam>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InputFileContentParam>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

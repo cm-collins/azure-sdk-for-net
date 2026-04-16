@@ -47,6 +47,16 @@ namespace Azure.AI.Projects
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InputItemFunctionShellCallOutputItemParam>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InputItemFunctionShellCallOutputItemParam IPersistableModel<InputItemFunctionShellCallOutputItemParam>.Create(BinaryData data, ModelReaderWriterOptions options) => (InputItemFunctionShellCallOutputItemParam)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InputItemFunctionShellCallOutputItemParam>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InputItemFunctionShellCallOutputItemParam>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -80,6 +90,11 @@ namespace Azure.AI.Projects
                 writer.WriteObjectValue(item, options);
             }
             writer.WriteEndArray();
+            if (Optional.IsDefined(Status))
+            {
+                writer.WritePropertyName("status"u8);
+                writer.WriteStringValue(Status.Value.ToSerialString());
+            }
             if (Optional.IsDefined(MaxOutputLength))
             {
                 writer.WritePropertyName("max_output_length"u8);
@@ -117,6 +132,7 @@ namespace Azure.AI.Projects
             string id = default;
             string callId = default;
             IList<FunctionShellCallOutputContentParam> output = default;
+            FunctionShellCallItemStatus? status = default;
             long? maxOutputLength = default;
             foreach (var prop in element.EnumerateObject())
             {
@@ -150,6 +166,16 @@ namespace Azure.AI.Projects
                     output = array;
                     continue;
                 }
+                if (prop.NameEquals("status"u8))
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        status = null;
+                        continue;
+                    }
+                    status = prop.Value.GetString().ToFunctionShellCallItemStatus();
+                    continue;
+                }
                 if (prop.NameEquals("max_output_length"u8))
                 {
                     if (prop.Value.ValueKind == JsonValueKind.Null)
@@ -171,17 +197,8 @@ namespace Azure.AI.Projects
                 id,
                 callId,
                 output,
+                status,
                 maxOutputLength);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InputItemFunctionShellCallOutputItemParam>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InputItemFunctionShellCallOutputItemParam IPersistableModel<InputItemFunctionShellCallOutputItemParam>.Create(BinaryData data, ModelReaderWriterOptions options) => (InputItemFunctionShellCallOutputItemParam)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InputItemFunctionShellCallOutputItemParam>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

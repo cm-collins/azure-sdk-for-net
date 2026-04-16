@@ -47,6 +47,16 @@ namespace OpenAI
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InternalEasyInputMessage>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InternalEasyInputMessage IPersistableModel<InternalEasyInputMessage>.Create(BinaryData data, ModelReaderWriterOptions options) => (InternalEasyInputMessage)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InternalEasyInputMessage>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InternalEasyInputMessage>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -77,6 +87,11 @@ namespace OpenAI
                 JsonSerializer.Serialize(writer, document.RootElement);
             }
 #endif
+            if (Optional.IsDefined(Phase))
+            {
+                writer.WritePropertyName("phase"u8);
+                writer.WriteStringValue(Phase.Value.ToSerialString());
+            }
             if (Optional.IsDefined(Status))
             {
                 writer.WritePropertyName("status"u8);
@@ -113,6 +128,7 @@ namespace OpenAI
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             EasyInputMessageRole role = default;
             BinaryData content = default;
+            MessagePhase? phase = default;
             EasyInputMessageStatus? status = default;
             foreach (var prop in element.EnumerateObject())
             {
@@ -131,6 +147,16 @@ namespace OpenAI
                     content = BinaryData.FromString(prop.Value.GetRawText());
                     continue;
                 }
+                if (prop.NameEquals("phase"u8))
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        phase = null;
+                        continue;
+                    }
+                    phase = prop.Value.GetString().ToMessagePhase();
+                    continue;
+                }
                 if (prop.NameEquals("status"u8))
                 {
                     if (prop.Value.ValueKind == JsonValueKind.Null)
@@ -145,17 +171,13 @@ namespace OpenAI
                     additionalBinaryDataProperties.Add(prop.Name, BinaryData.FromString(prop.Value.GetRawText()));
                 }
             }
-            return new InternalEasyInputMessage(@type, additionalBinaryDataProperties, role, content, status);
+            return new InternalEasyInputMessage(
+                @type,
+                additionalBinaryDataProperties,
+                role,
+                content,
+                phase,
+                status);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InternalEasyInputMessage>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InternalEasyInputMessage IPersistableModel<InternalEasyInputMessage>.Create(BinaryData data, ModelReaderWriterOptions options) => (InternalEasyInputMessage)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InternalEasyInputMessage>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

@@ -47,6 +47,16 @@ namespace Azure.AI.Projects
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InputItemCustomToolCall>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InputItemCustomToolCall IPersistableModel<InputItemCustomToolCall>.Create(BinaryData data, ModelReaderWriterOptions options) => (InputItemCustomToolCall)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InputItemCustomToolCall>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InputItemCustomToolCall>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -73,6 +83,11 @@ namespace Azure.AI.Projects
             }
             writer.WritePropertyName("call_id"u8);
             writer.WriteStringValue(CallId);
+            if (Optional.IsDefined(Namespace))
+            {
+                writer.WritePropertyName("namespace"u8);
+                writer.WriteStringValue(Namespace);
+            }
             writer.WritePropertyName("name"u8);
             writer.WriteStringValue(Name);
             writer.WritePropertyName("input"u8);
@@ -108,6 +123,7 @@ namespace Azure.AI.Projects
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             string id = default;
             string callId = default;
+            string @namespace = default;
             string name = default;
             string input = default;
             foreach (var prop in element.EnumerateObject())
@@ -125,6 +141,11 @@ namespace Azure.AI.Projects
                 if (prop.NameEquals("call_id"u8))
                 {
                     callId = prop.Value.GetString();
+                    continue;
+                }
+                if (prop.NameEquals("namespace"u8))
+                {
+                    @namespace = prop.Value.GetString();
                     continue;
                 }
                 if (prop.NameEquals("name"u8))
@@ -147,18 +168,9 @@ namespace Azure.AI.Projects
                 additionalBinaryDataProperties,
                 id,
                 callId,
+                @namespace,
                 name,
                 input);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InputItemCustomToolCall>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InputItemCustomToolCall IPersistableModel<InputItemCustomToolCall>.Create(BinaryData data, ModelReaderWriterOptions options) => (InputItemCustomToolCall)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InputItemCustomToolCall>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

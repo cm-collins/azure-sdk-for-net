@@ -47,6 +47,16 @@ namespace Azure.AI.Projects
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InputItemOutputMessage>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InputItemOutputMessage IPersistableModel<InputItemOutputMessage>.Create(BinaryData data, ModelReaderWriterOptions options) => (InputItemOutputMessage)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InputItemOutputMessage>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InputItemOutputMessage>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -77,6 +87,11 @@ namespace Azure.AI.Projects
                 writer.WriteObjectValue(item, options);
             }
             writer.WriteEndArray();
+            if (Optional.IsDefined(Phase))
+            {
+                writer.WritePropertyName("phase"u8);
+                writer.WriteStringValue(Phase.Value.ToSerialString());
+            }
             writer.WritePropertyName("status"u8);
             writer.WriteStringValue(Status.ToSerialString());
         }
@@ -111,6 +126,7 @@ namespace Azure.AI.Projects
             string id = default;
             string role = default;
             IList<OutputMessageContent> content = default;
+            MessagePhase? phase = default;
             InputItemOutputMessageStatus status = default;
             foreach (var prop in element.EnumerateObject())
             {
@@ -139,6 +155,16 @@ namespace Azure.AI.Projects
                     content = array;
                     continue;
                 }
+                if (prop.NameEquals("phase"u8))
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        phase = null;
+                        continue;
+                    }
+                    phase = prop.Value.GetString().ToMessagePhase();
+                    continue;
+                }
                 if (prop.NameEquals("status"u8))
                 {
                     status = prop.Value.GetString().ToInputItemOutputMessageStatus();
@@ -155,17 +181,8 @@ namespace Azure.AI.Projects
                 id,
                 role,
                 content,
+                phase,
                 status);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InputItemOutputMessage>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InputItemOutputMessage IPersistableModel<InputItemOutputMessage>.Create(BinaryData data, ModelReaderWriterOptions options) => (InputItemOutputMessage)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InputItemOutputMessage>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

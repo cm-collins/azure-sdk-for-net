@@ -6,8 +6,9 @@ using System;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Memory
 {
     /// <summary> A memory item specifically containing user profile information extracted from conversations, such as preferences, interests, and personal details. </summary>
     public partial class UserProfileMemoryItem : MemoryItem, IJsonModel<UserProfileMemoryItem>
@@ -46,6 +47,16 @@ namespace Azure.AI.Projects
                     throw new FormatException($"The model {nameof(UserProfileMemoryItem)} does not support writing '{options.Format}' format.");
             }
         }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<UserProfileMemoryItem>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        UserProfileMemoryItem IPersistableModel<UserProfileMemoryItem>.Create(BinaryData data, ModelReaderWriterOptions options) => (UserProfileMemoryItem)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<UserProfileMemoryItem>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
 
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
@@ -139,15 +150,5 @@ namespace Azure.AI.Projects
                 kind,
                 additionalBinaryDataProperties);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<UserProfileMemoryItem>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        UserProfileMemoryItem IPersistableModel<UserProfileMemoryItem>.Create(BinaryData data, ModelReaderWriterOptions options) => (UserProfileMemoryItem)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<UserProfileMemoryItem>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

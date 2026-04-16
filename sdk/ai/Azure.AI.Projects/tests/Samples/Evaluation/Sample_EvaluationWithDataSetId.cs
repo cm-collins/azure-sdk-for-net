@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -12,7 +12,8 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Azure.AI.Projects.OpenAI;
+using Azure.AI.Extensions.OpenAI;
+using Azure.AI.Projects.Agents;
 using Azure.Identity;
 using Microsoft.ClientModel.TestFramework;
 using NUnit.Framework;
@@ -22,7 +23,7 @@ namespace Azure.AI.Projects.Tests.Samples.Evaluation;
 
 public class Sample_EvaluationsWithDataSetID : SamplesBase
 {
-    #region Snippet:Sampple_GetError_EvaluationsWithDataSetID
+    #region Snippet:Sample_GetError_EvaluationsWithDataSetID
     private static string GetErrorMessageOrEmpty(ClientResult result)
     {
         string error = "";
@@ -58,7 +59,7 @@ public class Sample_EvaluationsWithDataSetID : SamplesBase
     }
     #endregion
 
-    #region Snippet:Sampple_GetFile_EvaluationsWithDataSetID
+    #region Snippet:Sample_GetFile_EvaluationsWithDataSetID
     private static string GetFile([CallerFilePath] string pth = "")
     {
         var dirName = Path.GetDirectoryName(pth) ?? "";
@@ -66,7 +67,7 @@ public class Sample_EvaluationsWithDataSetID : SamplesBase
     }
     #endregion
 
-    #region Snippet:Sampple_GetResultCounts_EvaluationsWithDataSetID
+    #region Snippet:Sample_GetResultCounts_EvaluationsWithDataSetID
     private static string GetResultsCounts(ClientResult result)
     {
         Utf8JsonReader reader = new(result.GetRawResponse().Content.ToMemory().ToArray());
@@ -93,7 +94,7 @@ public class Sample_EvaluationsWithDataSetID : SamplesBase
         return sbFormattedCounts.ToString();
     }
     #endregion
-    #region Snippet:Sampple_GetStringValues_EvaluationsWithDataSetID
+    #region Snippet:Sample_GetStringValues_EvaluationsWithDataSetID
     private static Dictionary<string, string> ParseClientResult(ClientResult result, string[] expectedProperties)
     {
         Dictionary<string, string> results = [];
@@ -126,7 +127,7 @@ public class Sample_EvaluationsWithDataSetID : SamplesBase
         return results;
     }
     #endregion
-    #region Snippet:Sampple_GetResultsList_EvaluationsWithDataSetID_Async
+    #region Snippet:Sample_GetResultsList_EvaluationsWithDataSetID_Async
     private static async Task<List<string>> GetResultsListAsync(EvaluationClient client, string evaluationId, string evaluationRunId)
     {
         List<string> resultJsons = [];
@@ -158,7 +159,7 @@ public class Sample_EvaluationsWithDataSetID : SamplesBase
         return resultJsons;
     }
     #endregion
-    #region Snippet:Sampple_GetResultsList_EvaluationsWithDataSetID_Sync
+    #region Snippet:Sample_GetResultsList_EvaluationsWithDataSetID_Sync
     private static List<string> GetResultsList(EvaluationClient client, string evaluationId, string evaluationRunId)
     {
         List<string> resultJsons = [];
@@ -196,18 +197,18 @@ public class Sample_EvaluationsWithDataSetID : SamplesBase
     [AsyncOnly]
     public async Task EvaluationsExampleAsync()
     {
-        #region Snippet:Sampple_CreateClients_EvaluationsWithDataSetID
+        #region Snippet:Sample_CreateClients_EvaluationsWithDataSetID
 #if SNIPPET
-        var endpoint = System.Environment.GetEnvironmentVariable("PROJECT_ENDPOINT");
-        var modelDeploymentName = System.Environment.GetEnvironmentVariable("MODEL_DEPLOYMENT_NAME");
+        var endpoint = System.Environment.GetEnvironmentVariable("FOUNDRY_PROJECT_ENDPOINT");
+        var modelDeploymentName = System.Environment.GetEnvironmentVariable("FOUNDRY_MODEL_NAME");
         var connectionName = System.Environment.GetEnvironmentVariable("STORAGE_CONNECTION_NAME");
 #else
-        var endpoint = TestEnvironment.PROJECT_ENDPOINT;
-        var modelDeploymentName = TestEnvironment.MODELDEPLOYMENTNAME;
+        var endpoint = TestEnvironment.FOUNDRY_PROJECT_ENDPOINT;
+        var modelDeploymentName = TestEnvironment.FOUNDRY_MODEL_NAME;
         var connectionName = TestEnvironment.STORAGECONNECTIONNAME;
 #endif
         AIProjectClient projectClient = new(new Uri(endpoint), new DefaultAzureCredential());
-        EvaluationClient evaluationClient = projectClient.OpenAI.GetEvaluationClient();
+        EvaluationClient evaluationClient = projectClient.ProjectOpenAIClient.GetEvaluationClient();
         #endregion
         #region Snippet:Sample_CreateData_EvaluationsWithDataSetID
         object[] testingCriteria = [
@@ -342,16 +343,16 @@ public class Sample_EvaluationsWithDataSetID : SamplesBase
     public void EvaluationsExampleSync()
     {
 #if SNIPPET
-        var endpoint = System.Environment.GetEnvironmentVariable("PROJECT_ENDPOINT");
-        var modelDeploymentName = System.Environment.GetEnvironmentVariable("MODEL_DEPLOYMENT_NAME");
+        var endpoint = System.Environment.GetEnvironmentVariable("FOUNDRY_PROJECT_ENDPOINT");
+        var modelDeploymentName = System.Environment.GetEnvironmentVariable("FOUNDRY_MODEL_NAME");
         var connectionName = System.Environment.GetEnvironmentVariable("STORAGE_CONNECTION_NAME");
 #else
-        var endpoint = TestEnvironment.PROJECT_ENDPOINT;
-        var modelDeploymentName = TestEnvironment.MODELDEPLOYMENTNAME;
+        var endpoint = TestEnvironment.FOUNDRY_PROJECT_ENDPOINT;
+        var modelDeploymentName = TestEnvironment.FOUNDRY_MODEL_NAME;
         var connectionName = TestEnvironment.STORAGECONNECTIONNAME;
 #endif
         AIProjectClient projectClient = new(new Uri(endpoint), new DefaultAzureCredential());
-        EvaluationClient evaluationClient = projectClient.OpenAI.GetEvaluationClient();
+        EvaluationClient evaluationClient = projectClient.ProjectOpenAIClient.GetEvaluationClient();
         object[] testingCriteria = [
             new {
                 type = "azure_ai_evaluator",

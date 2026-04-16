@@ -6,6 +6,7 @@ using System;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects.Memory;
 
 namespace Azure.AI.Projects
 {
@@ -46,6 +47,16 @@ namespace Azure.AI.Projects
                     throw new FormatException($"The model {nameof(MemorySearchPreviewTool)} does not support writing '{options.Format}' format.");
             }
         }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<MemorySearchPreviewTool>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        MemorySearchPreviewTool IPersistableModel<MemorySearchPreviewTool>.Create(BinaryData data, ModelReaderWriterOptions options) => (MemorySearchPreviewTool)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<MemorySearchPreviewTool>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
 
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
@@ -161,15 +172,5 @@ namespace Azure.AI.Projects
                 searchOptions,
                 updateDelay);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<MemorySearchPreviewTool>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        MemorySearchPreviewTool IPersistableModel<MemorySearchPreviewTool>.Create(BinaryData data, ModelReaderWriterOptions options) => (MemorySearchPreviewTool)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<MemorySearchPreviewTool>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

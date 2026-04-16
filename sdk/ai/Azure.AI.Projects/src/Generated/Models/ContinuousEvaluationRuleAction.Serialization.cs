@@ -6,8 +6,9 @@ using System;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Evaluation
 {
     /// <summary> Evaluation rule action for continuous evaluation. </summary>
     public partial class ContinuousEvaluationRuleAction : EvaluationRuleAction, IJsonModel<ContinuousEvaluationRuleAction>
@@ -46,6 +47,16 @@ namespace Azure.AI.Projects
                     throw new FormatException($"The model {nameof(ContinuousEvaluationRuleAction)} does not support writing '{options.Format}' format.");
             }
         }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<ContinuousEvaluationRuleAction>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        ContinuousEvaluationRuleAction IPersistableModel<ContinuousEvaluationRuleAction>.Create(BinaryData data, ModelReaderWriterOptions options) => (ContinuousEvaluationRuleAction)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<ContinuousEvaluationRuleAction>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
 
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
@@ -132,15 +143,5 @@ namespace Azure.AI.Projects
             }
             return new ContinuousEvaluationRuleAction(@type, additionalBinaryDataProperties, evalId, maxHourlyRuns);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<ContinuousEvaluationRuleAction>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        ContinuousEvaluationRuleAction IPersistableModel<ContinuousEvaluationRuleAction>.Create(BinaryData data, ModelReaderWriterOptions options) => (ContinuousEvaluationRuleAction)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<ContinuousEvaluationRuleAction>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

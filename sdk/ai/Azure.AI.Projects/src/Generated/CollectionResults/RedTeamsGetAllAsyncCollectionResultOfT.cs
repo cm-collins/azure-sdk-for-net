@@ -7,9 +7,8 @@ using System.ClientModel;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Azure.Core.Foundations;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Evaluation
 {
     internal partial class RedTeamsGetAllAsyncCollectionResultOfT : AsyncCollectionResult<RedTeam>
     {
@@ -53,7 +52,7 @@ namespace Azure.AI.Projects
             Uri nextPage = ((PagedRedTeam)page).NextLink;
             if (nextPage != null)
             {
-                return ContinuationToken.FromBytes(BinaryData.FromString(nextPage.AbsoluteUri));
+                return ContinuationToken.FromBytes(BinaryData.FromString(nextPage.IsAbsoluteUri ? nextPage.AbsoluteUri : nextPage.OriginalString));
             }
             else
             {

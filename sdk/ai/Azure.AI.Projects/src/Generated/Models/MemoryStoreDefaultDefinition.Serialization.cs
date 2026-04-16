@@ -6,8 +6,9 @@ using System;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Memory
 {
     /// <summary> Default memory store implementation. </summary>
     public partial class MemoryStoreDefaultDefinition : MemoryStoreDefinition, IJsonModel<MemoryStoreDefaultDefinition>
@@ -46,6 +47,16 @@ namespace Azure.AI.Projects
                     throw new FormatException($"The model {nameof(MemoryStoreDefaultDefinition)} does not support writing '{options.Format}' format.");
             }
         }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<MemoryStoreDefaultDefinition>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        MemoryStoreDefaultDefinition IPersistableModel<MemoryStoreDefaultDefinition>.Create(BinaryData data, ModelReaderWriterOptions options) => (MemoryStoreDefaultDefinition)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<MemoryStoreDefaultDefinition>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
 
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
@@ -140,15 +151,5 @@ namespace Azure.AI.Projects
             }
             return new MemoryStoreDefaultDefinition(kind, additionalBinaryDataProperties, chatModel, embeddingModel, options0);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<MemoryStoreDefaultDefinition>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        MemoryStoreDefaultDefinition IPersistableModel<MemoryStoreDefaultDefinition>.Create(BinaryData data, ModelReaderWriterOptions options) => (MemoryStoreDefaultDefinition)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<MemoryStoreDefaultDefinition>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

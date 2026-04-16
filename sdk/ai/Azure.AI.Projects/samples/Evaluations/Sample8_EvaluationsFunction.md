@@ -6,10 +6,10 @@ using the `AIProjectClient`.
 1. First, we need to create project client and read the environment variables which will be used in the next steps. We will also create an `EvaluationClient` for creating and running evaluations.
 
 ```C# Snippet:Sample_CreateClients_EvaluationsFunction
-var endpoint = System.Environment.GetEnvironmentVariable("PROJECT_ENDPOINT");
-var modelDeploymentName = System.Environment.GetEnvironmentVariable("MODEL_DEPLOYMENT_NAME");
+var endpoint = System.Environment.GetEnvironmentVariable("FOUNDRY_PROJECT_ENDPOINT");
+var modelDeploymentName = System.Environment.GetEnvironmentVariable("FOUNDRY_MODEL_NAME");
 AIProjectClient projectClient = new(new Uri(endpoint), new DefaultAzureCredential());
-EvaluationClient evaluationClient = projectClient.OpenAI.GetEvaluationClient();
+EvaluationClient evaluationClient = projectClient.ProjectOpenAIClient.GetEvaluationClient();
 ```
 
 2. Define the static method, which will be used as a function and a function tool.
@@ -45,12 +45,12 @@ private static readonly FunctionTool horoscopeTool = ResponseTool.CreateFunction
 
 Synchronous sample:
 ```C# Snippet:Sample_CreateAgent_EvaluationsFunction_Sync
-PromptAgentDefinition agentDefinition = new(model: modelDeploymentName)
+DeclarativeAgentDefinition agentDefinition = new(model: modelDeploymentName)
 {
     Instructions = "You are a helpful assistant that can use function tools.",
     Tools = { horoscopeTool }
 };
-AgentVersion agentVersion = projectClient.Agents.CreateAgentVersion(
+ProjectsAgentVersion agentVersion = projectClient.AgentAdministrationClient.CreateAgentVersion(
     agentName: "evalAgent",
     options: new(agentDefinition));
 Console.WriteLine($"Agent created (id: {agentVersion.Id}, name: {agentVersion.Name}, version: {agentVersion.Version})");
@@ -58,12 +58,12 @@ Console.WriteLine($"Agent created (id: {agentVersion.Id}, name: {agentVersion.Na
 
 Asynchronous sample:
 ```C# Snippet:Sample_CreateAgent_EvaluationsFunction_Async
-PromptAgentDefinition agentDefinition = new(model: modelDeploymentName)
+DeclarativeAgentDefinition agentDefinition = new(model: modelDeploymentName)
 {
     Instructions = "You are a helpful assistant that can use function tools.",
     Tools = { horoscopeTool }
 };
-AgentVersion agentVersion = await projectClient.Agents.CreateAgentVersionAsync(
+ProjectsAgentVersion agentVersion = await projectClient.AgentAdministrationClient.CreateAgentVersionAsync(
     agentName: "evalAgent",
     options: new(agentDefinition));
 Console.WriteLine($"Agent created (id: {agentVersion.Id}, name: {agentVersion.Name}, version: {agentVersion.Version})");
@@ -88,7 +88,7 @@ private static FunctionCallOutputResponseItem GetResolvedToolOutput(FunctionCall
 
 Synchronous sample:
 ```C# Snippet:Sample_CreateResponse_EvaluationsFunction_Sync
-ProjectResponsesClient responseClient = projectClient.OpenAI.GetProjectResponsesClientForAgent(agentVersion.Name);
+ProjectResponsesClient responseClient = projectClient.ProjectOpenAIClient.GetProjectResponsesClientForAgent(agentVersion.Name);
 
 ResponseItem request = ResponseItem.CreateUserMessageItem("What is my horoscope? I am an Aquarius.");
 List<ResponseItem> inputItems = [request];
@@ -120,7 +120,7 @@ Console.WriteLine(response.GetOutputText());
 
 Asynchronous sample:
 ```C# Snippet:Sample_CreateResponse_EvaluationsFunction_Async
-ProjectResponsesClient responseClient = projectClient.OpenAI.GetProjectResponsesClientForAgent(agentVersion.Name);
+ProjectResponsesClient responseClient = projectClient.ProjectOpenAIClient.GetProjectResponsesClientForAgent(agentVersion.Name);
 
 ResponseItem request = ResponseItem.CreateUserMessageItem("What is my horoscope? I am an Aquarius.");
 List<ResponseItem> inputItems = [request];
@@ -181,7 +181,7 @@ private static BinaryData GetEvaluationConfig(string modelDeploymentName)
 
 7. The `EvaluationClient` uses protocol methods i.e. they take in JSON in the form of `BinaryData` and return `ClientResult`, containing binary encoded JSON response, which can be retrieved using `GetRawResponse()` method. To simplify parsing JSON we will create helper methods. One of the methods is named `ParseClientResult`. It gets string values of the top-level JSON properties. In the next section we will use it to get evaluation name and ID.
 
-```C# Snippet:Sampple_GetStringValues_EvaluationsFunction
+```C# Snippet:Sample_GetStringValues_EvaluationsFunction
 private static Dictionary<string, string> ParseClientResult(ClientResult result, string[] expectedProperties)
 {
     Dictionary<string, string> results = [];
@@ -298,7 +298,7 @@ Console.WriteLine($"Evaluation run created (id: {runId})");
 
 11. Define the method to get the error message and code from the response if any.
 
-```C# Snippet:Sampple_GetError_EvaluationsFunction
+```C# Snippet:Sample_GetError_EvaluationsFunction
 private static string GetErrorMessageOrEmpty(ClientResult result)
 {
     string error = "";
@@ -368,7 +368,7 @@ if (runStatus == "failed")
 
 13. Like the `ParseClientResult` we will define the method, getting the result counts `GetResultsCounts`, which formats the `result_counts` property of the output JSON.
 
-```C# Snippet:Sampple_GetResultCounts_EvaluationsFunction
+```C# Snippet:Sample_GetResultCounts_EvaluationsFunction
 private static string GetResultsCounts(ClientResult result)
 {
     Utf8JsonReader reader = new(result.GetRawResponse().Content.ToMemory().ToArray());
@@ -399,7 +399,7 @@ private static string GetResultsCounts(ClientResult result)
 14. To get the results JSON we will define two methods `GetResultsList` and `GetResultsListAsync`, which are iterating over the pages containing results.
 
 Synchronous sample:
-```C# Snippet:Sampple_GetResultsList_EvaluationsFunction_Sync
+```C# Snippet:Sample_GetResultsList_EvaluationsFunction_Sync
 private static List<string> GetResultsList(EvaluationClient client, string evaluationId, string evaluationRunId)
 {
     List<string> resultJsons = [];
@@ -434,7 +434,7 @@ private static List<string> GetResultsList(EvaluationClient client, string evalu
 ```
 
 Asynchronous sample:
-```C# Snippet:Sampple_GetResultsList_EvaluationsFunction_Async
+```C# Snippet:Sample_GetResultsList_EvaluationsFunction_Async
 private static async Task<List<string>> GetResultsListAsync(EvaluationClient client, string evaluationId, string evaluationRunId)
 {
     List<string> resultJsons = [];
@@ -502,11 +502,11 @@ Console.WriteLine($"------------------------------------------------------------
 Synchronous sample:
 ```C# Snippet:Sample_Cleanup_EvaluationsFunction_Sync
 evaluationClient.DeleteEvaluation(evaluationId, new System.ClientModel.Primitives.RequestOptions());
-projectClient.Agents.DeleteAgentVersion(agentName: agentVersion.Name, agentVersion: agentVersion.Version);
+projectClient.AgentAdministrationClient.DeleteAgentVersion(agentName: agentVersion.Name, agentVersion: agentVersion.Version);
 ```
 
 Asynchronous sample:
 ```C# Snippet:Sample_Cleanup_EvaluationsFunction_Async
 await evaluationClient.DeleteEvaluationAsync(evaluationId, new System.ClientModel.Primitives.RequestOptions());
-await projectClient.Agents.DeleteAgentVersionAsync(agentName: agentVersion.Name, agentVersion: agentVersion.Version);
+await projectClient.AgentAdministrationClient.DeleteAgentVersionAsync(agentName: agentVersion.Name, agentVersion: agentVersion.Version);
 ```

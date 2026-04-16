@@ -6,8 +6,9 @@ using System;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Evaluation
 {
     /// <summary> Summary of the error cluster analysis. </summary>
     public partial class InsightSummary : IJsonModel<InsightSummary>
@@ -47,6 +48,16 @@ namespace Azure.AI.Projects
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InsightSummary>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InsightSummary IPersistableModel<InsightSummary>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InsightSummary>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InsightSummary>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -72,7 +83,7 @@ namespace Azure.AI.Projects
             writer.WritePropertyName("uniqueClusterCount"u8);
             writer.WriteNumberValue(UniqueClusterCount);
             writer.WritePropertyName("method"u8);
-            writer.WriteStringValue(Method);
+            writer.WriteStringValue(MethodName);
             writer.WritePropertyName("usage"u8);
             writer.WriteObjectValue(Usage, options);
             if (options.Format != "W" && _additionalBinaryDataProperties != null)
@@ -120,7 +131,7 @@ namespace Azure.AI.Projects
             int sampleCount = default;
             int uniqueSubclusterCount = default;
             int uniqueClusterCount = default;
-            string @method = default;
+            string methodName = default;
             ClusterTokenUsage usage = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             foreach (var prop in element.EnumerateObject())
@@ -142,7 +153,7 @@ namespace Azure.AI.Projects
                 }
                 if (prop.NameEquals("method"u8))
                 {
-                    @method = prop.Value.GetString();
+                    methodName = prop.Value.GetString();
                     continue;
                 }
                 if (prop.NameEquals("usage"u8))
@@ -159,19 +170,9 @@ namespace Azure.AI.Projects
                 sampleCount,
                 uniqueSubclusterCount,
                 uniqueClusterCount,
-                @method,
+                methodName,
                 usage,
                 additionalBinaryDataProperties);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InsightSummary>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InsightSummary IPersistableModel<InsightSummary>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InsightSummary>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

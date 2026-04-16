@@ -7,6 +7,7 @@ using System.ClientModel;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects.Memory;
 
 namespace Azure.AI.Projects
 {
@@ -45,6 +46,26 @@ namespace Azure.AI.Projects
                 default:
                     throw new FormatException($"The model {nameof(InternalCreateMemoryStoreRequest)} does not support writing '{options.Format}' format.");
             }
+        }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InternalCreateMemoryStoreRequest>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InternalCreateMemoryStoreRequest IPersistableModel<InternalCreateMemoryStoreRequest>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InternalCreateMemoryStoreRequest>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
+        /// <param name="internalCreateMemoryStoreRequest"> The <see cref="InternalCreateMemoryStoreRequest"/> to serialize into <see cref="BinaryContent"/>. </param>
+        public static implicit operator BinaryContent(InternalCreateMemoryStoreRequest internalCreateMemoryStoreRequest)
+        {
+            if (internalCreateMemoryStoreRequest == null)
+            {
+                return null;
+            }
+            return BinaryContent.Create(internalCreateMemoryStoreRequest, ModelSerializationExtensions.WireOptions);
         }
 
         /// <param name="writer"> The JSON writer. </param>
@@ -181,26 +202,6 @@ namespace Azure.AI.Projects
                 }
             }
             return new InternalCreateMemoryStoreRequest(name, description, metadata ?? new ChangeTrackingDictionary<string, string>(), definition, additionalBinaryDataProperties);
-        }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InternalCreateMemoryStoreRequest>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InternalCreateMemoryStoreRequest IPersistableModel<InternalCreateMemoryStoreRequest>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InternalCreateMemoryStoreRequest>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
-
-        /// <param name="internalCreateMemoryStoreRequest"> The <see cref="InternalCreateMemoryStoreRequest"/> to serialize into <see cref="BinaryContent"/>. </param>
-        public static implicit operator BinaryContent(InternalCreateMemoryStoreRequest internalCreateMemoryStoreRequest)
-        {
-            if (internalCreateMemoryStoreRequest == null)
-            {
-                return null;
-            }
-            return BinaryContent.Create(internalCreateMemoryStoreRequest, ModelSerializationExtensions.WireOptions);
         }
     }
 }

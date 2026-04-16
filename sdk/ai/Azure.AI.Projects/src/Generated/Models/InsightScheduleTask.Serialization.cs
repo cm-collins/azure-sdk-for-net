@@ -6,11 +6,12 @@ using System;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Evaluation
 {
     /// <summary> Insight task for the schedule. </summary>
-    public partial class InsightScheduleTask : ScheduleTask, IJsonModel<InsightScheduleTask>
+    public partial class InsightScheduleTask : ProjectsScheduleTask, IJsonModel<InsightScheduleTask>
     {
         /// <summary> Initializes a new instance of <see cref="InsightScheduleTask"/> for deserialization. </summary>
         internal InsightScheduleTask()
@@ -19,7 +20,7 @@ namespace Azure.AI.Projects
 
         /// <param name="data"> The data to parse. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
-        protected override ScheduleTask PersistableModelCreateCore(BinaryData data, ModelReaderWriterOptions options)
+        protected override ProjectsScheduleTask PersistableModelCreateCore(BinaryData data, ModelReaderWriterOptions options)
         {
             string format = options.Format == "W" ? ((IPersistableModel<InsightScheduleTask>)this).GetFormatFromOptions(options) : options.Format;
             switch (format)
@@ -46,6 +47,16 @@ namespace Azure.AI.Projects
                     throw new FormatException($"The model {nameof(InsightScheduleTask)} does not support writing '{options.Format}' format.");
             }
         }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InsightScheduleTask>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InsightScheduleTask IPersistableModel<InsightScheduleTask>.Create(BinaryData data, ModelReaderWriterOptions options) => (InsightScheduleTask)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InsightScheduleTask>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
 
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
@@ -76,7 +87,7 @@ namespace Azure.AI.Projects
 
         /// <param name="reader"> The JSON reader. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
-        protected override ScheduleTask JsonModelCreateCore(ref Utf8JsonReader reader, ModelReaderWriterOptions options)
+        protected override ProjectsScheduleTask JsonModelCreateCore(ref Utf8JsonReader reader, ModelReaderWriterOptions options)
         {
             string format = options.Format == "W" ? ((IPersistableModel<InsightScheduleTask>)this).GetFormatFromOptions(options) : options.Format;
             if (format != "J")
@@ -98,7 +109,7 @@ namespace Azure.AI.Projects
             ScheduleTaskType @type = default;
             IDictionary<string, string> configuration = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
-            Insight insight = default;
+            ProjectsInsight insight = default;
             foreach (var prop in element.EnumerateObject())
             {
                 if (prop.NameEquals("type"u8))
@@ -129,7 +140,7 @@ namespace Azure.AI.Projects
                 }
                 if (prop.NameEquals("insight"u8))
                 {
-                    insight = Insight.DeserializeInsight(prop.Value, options);
+                    insight = ProjectsInsight.DeserializeProjectsInsight(prop.Value, options);
                     continue;
                 }
                 if (options.Format != "W")
@@ -139,15 +150,5 @@ namespace Azure.AI.Projects
             }
             return new InsightScheduleTask(@type, configuration ?? new ChangeTrackingDictionary<string, string>(), additionalBinaryDataProperties, insight);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InsightScheduleTask>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InsightScheduleTask IPersistableModel<InsightScheduleTask>.Create(BinaryData data, ModelReaderWriterOptions options) => (InsightScheduleTask)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InsightScheduleTask>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

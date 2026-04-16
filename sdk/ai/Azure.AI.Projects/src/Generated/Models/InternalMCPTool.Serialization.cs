@@ -47,6 +47,16 @@ namespace OpenAI
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InternalMCPTool>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InternalMCPTool IPersistableModel<InternalMCPTool>.Create(BinaryData data, ModelReaderWriterOptions options) => (InternalMCPTool)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InternalMCPTool>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InternalMCPTool>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -128,6 +138,11 @@ namespace OpenAI
                 }
 #endif
             }
+            if (Optional.IsDefined(DeferLoading))
+            {
+                writer.WritePropertyName("defer_loading"u8);
+                writer.WriteBooleanValue(DeferLoading.Value);
+            }
             if (Optional.IsDefined(ProjectConnectionId))
             {
                 writer.WritePropertyName("project_connection_id"u8);
@@ -170,6 +185,7 @@ namespace OpenAI
             IDictionary<string, string> headers = default;
             BinaryData allowedTools = default;
             BinaryData requireApproval = default;
+            bool? deferLoading = default;
             string projectConnectionId = default;
             foreach (var prop in element.EnumerateObject())
             {
@@ -189,7 +205,7 @@ namespace OpenAI
                     {
                         continue;
                     }
-                    serverUrl = string.IsNullOrEmpty(prop.Value.GetString()) ? null : new Uri(prop.Value.GetString());
+                    serverUrl = string.IsNullOrEmpty(prop.Value.GetString()) ? null : new Uri(prop.Value.GetString(), UriKind.RelativeOrAbsolute);
                     continue;
                 }
                 if (prop.NameEquals("connector_id"u8))
@@ -252,6 +268,15 @@ namespace OpenAI
                     requireApproval = BinaryData.FromString(prop.Value.GetRawText());
                     continue;
                 }
+                if (prop.NameEquals("defer_loading"u8))
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    deferLoading = prop.Value.GetBoolean();
+                    continue;
+                }
                 if (prop.NameEquals("project_connection_id"u8))
                 {
                     projectConnectionId = prop.Value.GetString();
@@ -273,17 +298,8 @@ namespace OpenAI
                 headers ?? new ChangeTrackingDictionary<string, string>(),
                 allowedTools,
                 requireApproval,
+                deferLoading,
                 projectConnectionId);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InternalMCPTool>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InternalMCPTool IPersistableModel<InternalMCPTool>.Create(BinaryData data, ModelReaderWriterOptions options) => (InternalMCPTool)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InternalMCPTool>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

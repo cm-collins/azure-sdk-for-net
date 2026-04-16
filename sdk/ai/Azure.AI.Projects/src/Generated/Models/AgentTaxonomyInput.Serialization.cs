@@ -6,8 +6,9 @@ using System;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Evaluation
 {
     /// <summary> Input configuration for the evaluation taxonomy when the input type is agent. </summary>
     public partial class AgentTaxonomyInput : EvaluationTaxonomyInput, IJsonModel<AgentTaxonomyInput>
@@ -46,6 +47,16 @@ namespace Azure.AI.Projects
                     throw new FormatException($"The model {nameof(AgentTaxonomyInput)} does not support writing '{options.Format}' format.");
             }
         }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<AgentTaxonomyInput>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        AgentTaxonomyInput IPersistableModel<AgentTaxonomyInput>.Create(BinaryData data, ModelReaderWriterOptions options) => (AgentTaxonomyInput)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<AgentTaxonomyInput>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
 
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
@@ -104,7 +115,7 @@ namespace Azure.AI.Projects
             }
             EvaluationTaxonomyInputType @type = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
-            AzureAIAgentTarget target = default;
+            EvaluationTarget target = default;
             IList<RiskCategory> riskCategories = default;
             foreach (var prop in element.EnumerateObject())
             {
@@ -115,7 +126,7 @@ namespace Azure.AI.Projects
                 }
                 if (prop.NameEquals("target"u8))
                 {
-                    target = AzureAIAgentTarget.DeserializeAzureAIAgentTarget(prop.Value, options);
+                    target = EvaluationTarget.DeserializeEvaluationTarget(prop.Value, options);
                     continue;
                 }
                 if (prop.NameEquals("riskCategories"u8))
@@ -135,15 +146,5 @@ namespace Azure.AI.Projects
             }
             return new AgentTaxonomyInput(@type, additionalBinaryDataProperties, target, riskCategories);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<AgentTaxonomyInput>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        AgentTaxonomyInput IPersistableModel<AgentTaxonomyInput>.Create(BinaryData data, ModelReaderWriterOptions options) => (AgentTaxonomyInput)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<AgentTaxonomyInput>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace Azure.AI.Projects
 {
-    /// <summary> ReasoningTextContent. </summary>
+    /// <summary> Reasoning text. </summary>
     internal partial class ReasoningTextContent : IJsonModel<ReasoningTextContent>
     {
         /// <summary> Initializes a new instance of <see cref="ReasoningTextContent"/> for deserialization. </summary>
@@ -46,6 +46,16 @@ namespace Azure.AI.Projects
                     throw new FormatException($"The model {nameof(ReasoningTextContent)} does not support writing '{options.Format}' format.");
             }
         }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<ReasoningTextContent>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        ReasoningTextContent IPersistableModel<ReasoningTextContent>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<ReasoningTextContent>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
 
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
@@ -133,15 +143,5 @@ namespace Azure.AI.Projects
             }
             return new ReasoningTextContent(@type, text, additionalBinaryDataProperties);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<ReasoningTextContent>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        ReasoningTextContent IPersistableModel<ReasoningTextContent>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<ReasoningTextContent>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

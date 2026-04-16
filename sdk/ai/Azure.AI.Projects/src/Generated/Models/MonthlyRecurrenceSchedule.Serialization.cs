@@ -6,8 +6,9 @@ using System;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Evaluation
 {
     /// <summary> Monthly recurrence schedule. </summary>
     public partial class MonthlyRecurrenceSchedule : RecurrenceSchedule, IJsonModel<MonthlyRecurrenceSchedule>
@@ -46,6 +47,16 @@ namespace Azure.AI.Projects
                     throw new FormatException($"The model {nameof(MonthlyRecurrenceSchedule)} does not support writing '{options.Format}' format.");
             }
         }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<MonthlyRecurrenceSchedule>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        MonthlyRecurrenceSchedule IPersistableModel<MonthlyRecurrenceSchedule>.Create(BinaryData data, ModelReaderWriterOptions options) => (MonthlyRecurrenceSchedule)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<MonthlyRecurrenceSchedule>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
 
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
@@ -127,15 +138,5 @@ namespace Azure.AI.Projects
             }
             return new MonthlyRecurrenceSchedule(@type, additionalBinaryDataProperties, daysOfMonth);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<MonthlyRecurrenceSchedule>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        MonthlyRecurrenceSchedule IPersistableModel<MonthlyRecurrenceSchedule>.Create(BinaryData data, ModelReaderWriterOptions options) => (MonthlyRecurrenceSchedule)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<MonthlyRecurrenceSchedule>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

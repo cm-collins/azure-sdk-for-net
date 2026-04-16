@@ -47,6 +47,16 @@ namespace OpenAI
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InternalCompoundFilter>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InternalCompoundFilter IPersistableModel<InternalCompoundFilter>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InternalCompoundFilter>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InternalCompoundFilter>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -66,7 +76,7 @@ namespace OpenAI
                 throw new FormatException($"The model {nameof(InternalCompoundFilter)} does not support writing '{format}' format.");
             }
             writer.WritePropertyName("type"u8);
-            writer.WriteStringValue(Type.ToString());
+            writer.WriteStringValue(Type.ToSerialString());
             writer.WritePropertyName("filters"u8);
             writer.WriteStartArray();
             foreach (BinaryData item in Filters)
@@ -128,14 +138,14 @@ namespace OpenAI
             {
                 return null;
             }
-            CompoundFilterType @type = default;
+            FileSearchToolFiltersType1 @type = default;
             IList<BinaryData> filters = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             foreach (var prop in element.EnumerateObject())
             {
                 if (prop.NameEquals("type"u8))
                 {
-                    @type = new CompoundFilterType(prop.Value.GetString());
+                    @type = prop.Value.GetString().ToFileSearchToolFiltersType1();
                     continue;
                 }
                 if (prop.NameEquals("filters"u8))
@@ -162,15 +172,5 @@ namespace OpenAI
             }
             return new InternalCompoundFilter(@type, filters, additionalBinaryDataProperties);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InternalCompoundFilter>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InternalCompoundFilter IPersistableModel<InternalCompoundFilter>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InternalCompoundFilter>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

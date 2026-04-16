@@ -1,13 +1,80 @@
 # Release History
 
-## 1.2.0-beta.6 (Unreleased)
+## 2.1.0-beta.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+### Sample Updates
+- Added Toolboxes sample.
+
+## 2.0.0 (2026-04-01)
+
+### Breaking Changes
+- `Insights` were renamed to `ProjectInsights`.
+- `Insight` was renamed to `ProjectsInsight`.
+- `Schedules` were renamed to `ProjectSchedules`.
+- `Schedule` was renamed to `ProjectsSchedule`.
+- `Target` was renamed to `EvaluationTarget`.
+- `Trigger` was renamed to `ScheduleTrigger`.
+- `ScheduleTask` was renamed to `ProjectsScheduleTask`.
+- `Evaluators` client was renamed to `ProjectEvaluators`.
+- `DetailEnum` was renamed to `InternalImageDetailLevel` and made internal.
+- `InputImageContentParamAutoParam` was renamed to `InternalInputImageContentParamAutoParam` and made internal.
+- `Azure.AI.Projects` evaluations and memory operations were moved to `Azure.AI.Projects.Evaluation` and `Azure.AI.Projects.Memory` namespaces respectively.
+- `AIProjectMemoryStoresOperations` were renamed to `AIProjectMemoryStores`.
+- `AgentManifestOptions` class was removed.
+- `EvalResult.Passed` property was renamed to `EvalResult.IsPassed`.
+- `EvalRunResultComparison.Evaluator` property was renamed to `EvalRunResultComparison.EvaluatorName`.
+- `EvalRunResultComparison.Metric` property was renamed to `EvalRunResultComparison.MetricName`.
+- `InsightSummary.Method` property was renamed to `InsightSummary.MethodName`.
+- `RedTeam.NumTurns` property was renamed to `RedTeam.TurnCount`.
+- `RedTeam.SimulationOnly` property was renamed to `RedTeam.IsSimulationOnly`.
+- `TaxonomySubCategory.Enabled` property was renamed to `TaxonomySubCategory.IsEnabled`.
+- `DeleteMemoryStoreResponse.Deleted` property was renamed to `DeleteMemoryStoreResponse.IsDeleted`.
+- `MemoryStoreDefaultOptions.ChatSummaryEnabled` property was renamed to `MemoryStoreDefaultOptions.IsChatSummaryEnabled`.
+- `MemoryStoreDefaultOptions.UserProfileEnabled` property was renamed to `MemoryStoreDefaultOptions.IsUserProfileEnabled`.
+- `MemoryStoreDeleteScopeResponse.Deleted` property was renamed to `MemoryStoreDeleteScopeResponse.IsDeleted`.
+- `AIProjectClient.OpenAI` property was renamed to `AIProjectClient.ProjectOpenAIClient`.
+- `AIProjectClient.Agents` property was renamed to `AIProjectClient.AgentAdministrationClient`.
+- `RecurrenceTrigger.StartTime`, `RecurrenceTrigger.EndTime`, `OneTimeTrigger.TriggerAt`, `CronTrigger.StartTime`, `CronTrigger.EndTime` and `ScheduleRun.TriggerTime` properties type was changed from `string` to `DateTimeOffset`.
+- Remove the `EvaluationScheduleTaskEvalRun` class.
+
+## 2.0.0-beta.2 (2026-03-12)
+
+### Breaking Changes
+* The `Azure.AI.Projects.OpenAI` package was renamed to `Azure.AI.Extensions.OpenAI`
+* The Agents administration was moved to the `Azure.AI.Projects.Agents` package.
+* OpenAI dependency was upgraded to 2.9.1.
+
+## 2.0.0-beta.1 (2026-02-24)
 
 ### Features Added
 
 - Updated for full `net10` framework compatibility, including removal of `<EnablePreviewFeatures>` flagging.
 
+### Breaking Changes
+
+**Transitive from Azure.AI.Projects.OpenAI**:
+* `ImageBasedHostedAgentDefinition` has been merged into `HostedAgentDefinition`
+  * `Image` is now an optional property on `HostedAgentDefinition`; no other net change
+- Tracing: gen_ai.system.instructions event changed to gen_ai.system_instructions attribute.
+- Tracing: provider name change from "azure.ai.agents" to "microsoft.foundry".
+
 ### Sample Updates
 - Added Evaluation sample.
+
+### Known Issues
+At the time of release, the following operation areas do not yet support the latest API version and will fail. Please temporarily use the previous library version until the new v1 operations are available.
+ - Computer use tool
+ - Fine tuning
+ - Red teams
+ - Evaluation
 
 ## 1.2.0-beta.5 (2025-12-12)
 
@@ -22,8 +89,6 @@
 * Added fine tuning samples.
 
 ## 1.2.0-beta.4 (2025-11-17)
-
-### Bugs Fixed
 
 - Fixed an issue preventing telemetry from being logged.
 

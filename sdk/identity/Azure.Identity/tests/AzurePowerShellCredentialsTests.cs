@@ -86,10 +86,10 @@ namespace Azure.Identity.Tests
         /// <summary>
         /// Returns the expected exception type for error scenarios.
         /// Base: AuthenticationFailedException when not chained, CredentialUnavailableException when chained.
-        /// ConfigurableCredential always wraps in DefaultAzureCredential (chained), so always CredentialUnavailableException.
         /// </summary>
-        protected virtual Type GetExpectedExceptionType(bool isChained)
+        protected Type GetExpectedExceptionType(bool isChained)
             => isChained ? typeof(CredentialUnavailableException) : typeof(AuthenticationFailedException);
+
         #endregion
 
         [Test]

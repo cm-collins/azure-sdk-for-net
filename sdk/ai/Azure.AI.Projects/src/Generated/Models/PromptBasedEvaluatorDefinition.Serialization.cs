@@ -6,8 +6,9 @@ using System;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Evaluation
 {
     /// <summary> Prompt-based evaluator. </summary>
     public partial class PromptBasedEvaluatorDefinition : EvaluatorDefinition, IJsonModel<PromptBasedEvaluatorDefinition>
@@ -46,6 +47,16 @@ namespace Azure.AI.Projects
                     throw new FormatException($"The model {nameof(PromptBasedEvaluatorDefinition)} does not support writing '{options.Format}' format.");
             }
         }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<PromptBasedEvaluatorDefinition>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        PromptBasedEvaluatorDefinition IPersistableModel<PromptBasedEvaluatorDefinition>.Create(BinaryData data, ModelReaderWriterOptions options) => (PromptBasedEvaluatorDefinition)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<PromptBasedEvaluatorDefinition>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
 
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
@@ -158,15 +169,5 @@ namespace Azure.AI.Projects
                 additionalBinaryDataProperties,
                 promptText);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<PromptBasedEvaluatorDefinition>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        PromptBasedEvaluatorDefinition IPersistableModel<PromptBasedEvaluatorDefinition>.Create(BinaryData data, ModelReaderWriterOptions options) => (PromptBasedEvaluatorDefinition)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<PromptBasedEvaluatorDefinition>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

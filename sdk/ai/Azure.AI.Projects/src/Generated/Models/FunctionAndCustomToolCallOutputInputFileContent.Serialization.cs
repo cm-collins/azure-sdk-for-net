@@ -42,6 +42,16 @@ namespace Azure.AI.Projects
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<FunctionAndCustomToolCallOutputInputFileContent>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        FunctionAndCustomToolCallOutputInputFileContent IPersistableModel<FunctionAndCustomToolCallOutputInputFileContent>.Create(BinaryData data, ModelReaderWriterOptions options) => (FunctionAndCustomToolCallOutputInputFileContent)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<FunctionAndCustomToolCallOutputInputFileContent>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<FunctionAndCustomToolCallOutputInputFileContent>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -71,15 +81,15 @@ namespace Azure.AI.Projects
                 writer.WritePropertyName("filename"u8);
                 writer.WriteStringValue(Filename);
             }
-            if (Optional.IsDefined(FileUrl))
-            {
-                writer.WritePropertyName("file_url"u8);
-                writer.WriteStringValue(FileUrl.AbsoluteUri);
-            }
             if (Optional.IsDefined(FileData))
             {
                 writer.WritePropertyName("file_data"u8);
                 writer.WriteStringValue(FileData);
+            }
+            if (Optional.IsDefined(FileUrl))
+            {
+                writer.WritePropertyName("file_url"u8);
+                writer.WriteStringValue(FileUrl.AbsoluteUri);
             }
         }
 
@@ -112,8 +122,8 @@ namespace Azure.AI.Projects
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             string fileId = default;
             string filename = default;
-            Uri fileUrl = default;
             string fileData = default;
+            Uri fileUrl = default;
             foreach (var prop in element.EnumerateObject())
             {
                 if (prop.NameEquals("type"u8))
@@ -136,18 +146,18 @@ namespace Azure.AI.Projects
                     filename = prop.Value.GetString();
                     continue;
                 }
+                if (prop.NameEquals("file_data"u8))
+                {
+                    fileData = prop.Value.GetString();
+                    continue;
+                }
                 if (prop.NameEquals("file_url"u8))
                 {
                     if (prop.Value.ValueKind == JsonValueKind.Null)
                     {
                         continue;
                     }
-                    fileUrl = string.IsNullOrEmpty(prop.Value.GetString()) ? null : new Uri(prop.Value.GetString());
-                    continue;
-                }
-                if (prop.NameEquals("file_data"u8))
-                {
-                    fileData = prop.Value.GetString();
+                    fileUrl = string.IsNullOrEmpty(prop.Value.GetString()) ? null : new Uri(prop.Value.GetString(), UriKind.RelativeOrAbsolute);
                     continue;
                 }
                 if (options.Format != "W")
@@ -160,18 +170,8 @@ namespace Azure.AI.Projects
                 additionalBinaryDataProperties,
                 fileId,
                 filename,
-                fileUrl,
-                fileData);
+                fileData,
+                fileUrl);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<FunctionAndCustomToolCallOutputInputFileContent>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        FunctionAndCustomToolCallOutputInputFileContent IPersistableModel<FunctionAndCustomToolCallOutputInputFileContent>.Create(BinaryData data, ModelReaderWriterOptions options) => (FunctionAndCustomToolCallOutputInputFileContent)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<FunctionAndCustomToolCallOutputInputFileContent>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

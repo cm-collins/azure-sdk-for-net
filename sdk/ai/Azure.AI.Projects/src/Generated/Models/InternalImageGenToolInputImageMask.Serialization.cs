@@ -42,6 +42,16 @@ namespace OpenAI
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InternalImageGenToolInputImageMask>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InternalImageGenToolInputImageMask IPersistableModel<InternalImageGenToolInputImageMask>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InternalImageGenToolInputImageMask>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InternalImageGenToolInputImageMask>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -63,7 +73,7 @@ namespace OpenAI
             if (Optional.IsDefined(ImageUrl))
             {
                 writer.WritePropertyName("image_url"u8);
-                writer.WriteStringValue(ImageUrl);
+                writer.WriteStringValue(ImageUrl.AbsoluteUri);
             }
             if (Optional.IsDefined(FileId))
             {
@@ -112,14 +122,18 @@ namespace OpenAI
             {
                 return null;
             }
-            string imageUrl = default;
+            Uri imageUrl = default;
             string fileId = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             foreach (var prop in element.EnumerateObject())
             {
                 if (prop.NameEquals("image_url"u8))
                 {
-                    imageUrl = prop.Value.GetString();
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    imageUrl = string.IsNullOrEmpty(prop.Value.GetString()) ? null : new Uri(prop.Value.GetString(), UriKind.RelativeOrAbsolute);
                     continue;
                 }
                 if (prop.NameEquals("file_id"u8))
@@ -134,15 +148,5 @@ namespace OpenAI
             }
             return new InternalImageGenToolInputImageMask(imageUrl, fileId, additionalBinaryDataProperties);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InternalImageGenToolInputImageMask>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InternalImageGenToolInputImageMask IPersistableModel<InternalImageGenToolInputImageMask>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InternalImageGenToolInputImageMask>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

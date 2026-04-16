@@ -7,8 +7,9 @@ using System.ClientModel;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Evaluation
 {
     /// <summary> Evaluation rule model. </summary>
     public partial class EvaluationRule : IJsonModel<EvaluationRule>
@@ -46,6 +47,26 @@ namespace Azure.AI.Projects
                 default:
                     throw new FormatException($"The model {nameof(EvaluationRule)} does not support writing '{options.Format}' format.");
             }
+        }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<EvaluationRule>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        EvaluationRule IPersistableModel<EvaluationRule>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<EvaluationRule>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
+        /// <param name="evaluationRule"> The <see cref="EvaluationRule"/> to serialize into <see cref="BinaryContent"/>. </param>
+        public static implicit operator BinaryContent(EvaluationRule evaluationRule)
+        {
+            if (evaluationRule == null)
+            {
+                return null;
+            }
+            return BinaryContent.Create(evaluationRule, ModelSerializationExtensions.WireOptions);
         }
 
         /// <param name="result"> The <see cref="ClientResult"/> to deserialize the <see cref="EvaluationRule"/> from. </param>
@@ -240,26 +261,6 @@ namespace Azure.AI.Projects
                 enabled,
                 systemData,
                 additionalBinaryDataProperties);
-        }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<EvaluationRule>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        EvaluationRule IPersistableModel<EvaluationRule>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<EvaluationRule>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
-
-        /// <param name="evaluationRule"> The <see cref="EvaluationRule"/> to serialize into <see cref="BinaryContent"/>. </param>
-        public static implicit operator BinaryContent(EvaluationRule evaluationRule)
-        {
-            if (evaluationRule == null)
-            {
-                return null;
-            }
-            return BinaryContent.Create(evaluationRule, ModelSerializationExtensions.WireOptions);
         }
     }
 }

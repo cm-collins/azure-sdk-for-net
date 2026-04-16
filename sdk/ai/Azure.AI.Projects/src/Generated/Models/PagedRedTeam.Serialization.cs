@@ -9,9 +9,8 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Azure.AI.Projects;
 
-namespace Azure.Core.Foundations
+namespace Azure.AI.Projects.Evaluation
 {
-    /// <summary> Paged collection of RedTeam items. </summary>
     internal partial class PagedRedTeam : IJsonModel<PagedRedTeam>
     {
         /// <summary> Initializes a new instance of <see cref="PagedRedTeam"/> for deserialization. </summary>
@@ -48,6 +47,16 @@ namespace Azure.Core.Foundations
                     throw new FormatException($"The model {nameof(PagedRedTeam)} does not support writing '{options.Format}' format.");
             }
         }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<PagedRedTeam>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        PagedRedTeam IPersistableModel<PagedRedTeam>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<PagedRedTeam>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
 
         /// <param name="result"> The <see cref="ClientResult"/> to deserialize the <see cref="PagedRedTeam"/> from. </param>
         public static explicit operator PagedRedTeam(ClientResult result)
@@ -131,7 +140,6 @@ namespace Azure.Core.Foundations
             }
             IList<RedTeam> value = default;
             Uri nextLink = default;
-            string clientRequestId = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             foreach (var prop in element.EnumerateObject())
             {
@@ -151,7 +159,7 @@ namespace Azure.Core.Foundations
                     {
                         continue;
                     }
-                    nextLink = string.IsNullOrEmpty(prop.Value.GetString()) ? null : new Uri(prop.Value.GetString());
+                    nextLink = string.IsNullOrEmpty(prop.Value.GetString()) ? null : new Uri(prop.Value.GetString(), UriKind.RelativeOrAbsolute);
                     continue;
                 }
                 if (options.Format != "W")
@@ -159,17 +167,7 @@ namespace Azure.Core.Foundations
                     additionalBinaryDataProperties.Add(prop.Name, BinaryData.FromString(prop.Value.GetRawText()));
                 }
             }
-            return new PagedRedTeam(value, nextLink, clientRequestId, additionalBinaryDataProperties);
+            return new PagedRedTeam(value, nextLink, additionalBinaryDataProperties);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<PagedRedTeam>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        PagedRedTeam IPersistableModel<PagedRedTeam>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<PagedRedTeam>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

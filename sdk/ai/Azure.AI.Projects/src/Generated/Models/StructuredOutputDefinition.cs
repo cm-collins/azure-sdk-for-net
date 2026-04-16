@@ -20,7 +20,7 @@ namespace Azure.AI.Projects
         /// <param name="schema"> The JSON schema for the structured output. </param>
         /// <param name="strict"> Whether to enforce strict validation. Default `true`. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="name"/>, <paramref name="description"/> or <paramref name="schema"/> is null. </exception>
-        public StructuredOutputDefinition(string name, string description, BinaryData schema, bool? strict)
+        public StructuredOutputDefinition(string name, string description, IDictionary<string, BinaryData> schema, bool? strict)
         {
             Argument.AssertNotNull(name, nameof(name));
             Argument.AssertNotNull(description, nameof(description));
@@ -38,7 +38,7 @@ namespace Azure.AI.Projects
         /// <param name="schema"> The JSON schema for the structured output. </param>
         /// <param name="strict"> Whether to enforce strict validation. Default `true`. </param>
         /// <param name="additionalBinaryDataProperties"> Keeps track of any properties unknown to the library. </param>
-        internal StructuredOutputDefinition(string name, string description, BinaryData schema, bool? strict, IDictionary<string, BinaryData> additionalBinaryDataProperties)
+        internal StructuredOutputDefinition(string name, string description, IDictionary<string, BinaryData> schema, bool? strict, IDictionary<string, BinaryData> additionalBinaryDataProperties)
         {
             Name = name;
             Description = description;
@@ -48,14 +48,14 @@ namespace Azure.AI.Projects
         }
 
         /// <summary> The name of the structured output. </summary>
-        public string Name { get; set; }
+        public string Name { get; }
 
         /// <summary> A description of the output to emit. Used by the model to determine when to emit the output. </summary>
-        public string Description { get; set; }
+        public string Description { get; }
 
         /// <summary>
         /// The JSON schema for the structured output.
-        /// <para> To assign an object to this property use <see cref="BinaryData.FromObjectAsJson{T}(T, JsonSerializerOptions?)"/>. </para>
+        /// <para> To assign an object to the value of this property use <see cref="BinaryData.FromObjectAsJson{T}(T, JsonSerializerOptions?)"/>. </para>
         /// <para> To assign an already formatted json string to this property use <see cref="BinaryData.FromString(string)"/>. </para>
         /// <para>
         /// Examples:
@@ -79,9 +79,9 @@ namespace Azure.AI.Projects
         /// </list>
         /// </para>
         /// </summary>
-        public BinaryData Schema { get; set; }
+        public IDictionary<string, BinaryData> Schema { get; }
 
         /// <summary> Whether to enforce strict validation. Default `true`. </summary>
-        public bool? Strict { get; set; }
+        public bool? Strict { get; }
     }
 }

@@ -48,6 +48,16 @@ namespace Azure.AI.Projects
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<OutputMessageContentOutputTextContent>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        OutputMessageContentOutputTextContent IPersistableModel<OutputMessageContentOutputTextContent>.Create(BinaryData data, ModelReaderWriterOptions options) => (OutputMessageContentOutputTextContent)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<OutputMessageContentOutputTextContent>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<OutputMessageContentOutputTextContent>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -76,16 +86,13 @@ namespace Azure.AI.Projects
                 writer.WriteObjectValue(item, options);
             }
             writer.WriteEndArray();
-            if (Optional.IsCollectionDefined(Logprobs))
+            writer.WritePropertyName("logprobs"u8);
+            writer.WriteStartArray();
+            foreach (InternalLogProb item in Logprobs)
             {
-                writer.WritePropertyName("logprobs"u8);
-                writer.WriteStartArray();
-                foreach (InternalLogProb item in Logprobs)
-                {
-                    writer.WriteObjectValue(item, options);
-                }
-                writer.WriteEndArray();
+                writer.WriteObjectValue(item, options);
             }
+            writer.WriteEndArray();
         }
 
         /// <param name="reader"> The JSON reader. </param>
@@ -142,10 +149,6 @@ namespace Azure.AI.Projects
                 }
                 if (prop.NameEquals("logprobs"u8))
                 {
-                    if (prop.Value.ValueKind == JsonValueKind.Null)
-                    {
-                        continue;
-                    }
                     List<InternalLogProb> array = new List<InternalLogProb>();
                     foreach (var item in prop.Value.EnumerateArray())
                     {
@@ -159,17 +162,7 @@ namespace Azure.AI.Projects
                     additionalBinaryDataProperties.Add(prop.Name, BinaryData.FromString(prop.Value.GetRawText()));
                 }
             }
-            return new OutputMessageContentOutputTextContent(@type, additionalBinaryDataProperties, text, annotations, logprobs ?? new ChangeTrackingList<InternalLogProb>());
+            return new OutputMessageContentOutputTextContent(@type, additionalBinaryDataProperties, text, annotations, logprobs);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<OutputMessageContentOutputTextContent>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        OutputMessageContentOutputTextContent IPersistableModel<OutputMessageContentOutputTextContent>.Create(BinaryData data, ModelReaderWriterOptions options) => (OutputMessageContentOutputTextContent)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<OutputMessageContentOutputTextContent>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

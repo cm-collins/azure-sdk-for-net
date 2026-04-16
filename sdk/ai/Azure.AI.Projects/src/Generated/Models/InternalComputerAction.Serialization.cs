@@ -47,6 +47,16 @@ namespace OpenAI
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InternalComputerAction>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InternalComputerAction IPersistableModel<InternalComputerAction>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InternalComputerAction>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InternalComputerAction>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -118,32 +128,22 @@ namespace OpenAI
                     case "double_click":
                         return DoubleClickAction.DeserializeDoubleClickAction(element, options);
                     case "drag":
-                        return Drag.DeserializeDrag(element, options);
+                        return DragParam.DeserializeDragParam(element, options);
                     case "keypress":
                         return KeyPressAction.DeserializeKeyPressAction(element, options);
                     case "move":
-                        return Move.DeserializeMove(element, options);
+                        return MoveParam.DeserializeMoveParam(element, options);
                     case "screenshot":
-                        return Screenshot.DeserializeScreenshot(element, options);
+                        return ScreenshotParam.DeserializeScreenshotParam(element, options);
                     case "scroll":
-                        return Scroll.DeserializeScroll(element, options);
+                        return ScrollParam.DeserializeScrollParam(element, options);
                     case "type":
-                        return Azure.AI.Projects.Type.DeserializeType(element, options);
+                        return TypeParam.DeserializeTypeParam(element, options);
                     case "wait":
-                        return Wait.DeserializeWait(element, options);
+                        return WaitParam.DeserializeWaitParam(element, options);
                 }
             }
             return UnknownComputerAction.DeserializeUnknownComputerAction(element, options);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InternalComputerAction>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InternalComputerAction IPersistableModel<InternalComputerAction>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InternalComputerAction>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

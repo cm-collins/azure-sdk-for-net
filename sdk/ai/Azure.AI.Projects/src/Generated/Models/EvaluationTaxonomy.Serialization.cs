@@ -7,8 +7,9 @@ using System.ClientModel;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Evaluation
 {
     /// <summary> Evaluation Taxonomy Definition. </summary>
     public partial class EvaluationTaxonomy : IJsonModel<EvaluationTaxonomy>
@@ -46,6 +47,26 @@ namespace Azure.AI.Projects
                 default:
                     throw new FormatException($"The model {nameof(EvaluationTaxonomy)} does not support writing '{options.Format}' format.");
             }
+        }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<EvaluationTaxonomy>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        EvaluationTaxonomy IPersistableModel<EvaluationTaxonomy>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<EvaluationTaxonomy>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
+        /// <param name="evaluationTaxonomy"> The <see cref="EvaluationTaxonomy"/> to serialize into <see cref="BinaryContent"/>. </param>
+        public static implicit operator BinaryContent(EvaluationTaxonomy evaluationTaxonomy)
+        {
+            if (evaluationTaxonomy == null)
+            {
+                return null;
+            }
+            return BinaryContent.Create(evaluationTaxonomy, ModelSerializationExtensions.WireOptions);
         }
 
         /// <param name="result"> The <see cref="ClientResult"/> to deserialize the <see cref="EvaluationTaxonomy"/> from. </param>
@@ -287,26 +308,6 @@ namespace Azure.AI.Projects
                 taxonomyCategories ?? new ChangeTrackingList<TaxonomyCategory>(),
                 properties ?? new ChangeTrackingDictionary<string, string>(),
                 additionalBinaryDataProperties);
-        }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<EvaluationTaxonomy>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        EvaluationTaxonomy IPersistableModel<EvaluationTaxonomy>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<EvaluationTaxonomy>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
-
-        /// <param name="evaluationTaxonomy"> The <see cref="EvaluationTaxonomy"/> to serialize into <see cref="BinaryContent"/>. </param>
-        public static implicit operator BinaryContent(EvaluationTaxonomy evaluationTaxonomy)
-        {
-            if (evaluationTaxonomy == null)
-            {
-                return null;
-            }
-            return BinaryContent.Create(evaluationTaxonomy, ModelSerializationExtensions.WireOptions);
         }
     }
 }

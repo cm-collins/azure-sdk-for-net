@@ -47,6 +47,16 @@ namespace OpenAI
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InternalComparisonFilter>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InternalComparisonFilter IPersistableModel<InternalComparisonFilter>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InternalComparisonFilter>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InternalComparisonFilter>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -66,7 +76,7 @@ namespace OpenAI
                 throw new FormatException($"The model {nameof(InternalComparisonFilter)} does not support writing '{format}' format.");
             }
             writer.WritePropertyName("type"u8);
-            writer.WriteStringValue(Type.ToString());
+            writer.WriteStringValue(Type.ToSerialString());
             writer.WritePropertyName("key"u8);
             writer.WriteStringValue(Key);
             writer.WritePropertyName("value"u8);
@@ -120,7 +130,7 @@ namespace OpenAI
             {
                 return null;
             }
-            ComparisonFilterType @type = default;
+            FileSearchToolFiltersType @type = default;
             string key = default;
             BinaryData value = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
@@ -128,7 +138,7 @@ namespace OpenAI
             {
                 if (prop.NameEquals("type"u8))
                 {
-                    @type = new ComparisonFilterType(prop.Value.GetString());
+                    @type = prop.Value.GetString().ToFileSearchToolFiltersType();
                     continue;
                 }
                 if (prop.NameEquals("key"u8))
@@ -148,15 +158,5 @@ namespace OpenAI
             }
             return new InternalComparisonFilter(@type, key, value, additionalBinaryDataProperties);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InternalComparisonFilter>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InternalComparisonFilter IPersistableModel<InternalComparisonFilter>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InternalComparisonFilter>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

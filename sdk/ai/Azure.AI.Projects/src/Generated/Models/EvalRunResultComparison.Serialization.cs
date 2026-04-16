@@ -6,8 +6,9 @@ using System;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Evaluation
 {
     /// <summary> Comparison results for treatment runs against the baseline. </summary>
     public partial class EvalRunResultComparison : IJsonModel<EvalRunResultComparison>
@@ -47,6 +48,16 @@ namespace Azure.AI.Projects
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<EvalRunResultComparison>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        EvalRunResultComparison IPersistableModel<EvalRunResultComparison>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<EvalRunResultComparison>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<EvalRunResultComparison>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -68,9 +79,9 @@ namespace Azure.AI.Projects
             writer.WritePropertyName("testingCriteria"u8);
             writer.WriteStringValue(TestingCriteria);
             writer.WritePropertyName("metric"u8);
-            writer.WriteStringValue(Metric);
+            writer.WriteStringValue(MetricName);
             writer.WritePropertyName("evaluator"u8);
-            writer.WriteStringValue(Evaluator);
+            writer.WriteStringValue(EvaluatorName);
             writer.WritePropertyName("baselineRunSummary"u8);
             writer.WriteObjectValue(BaselineRunSummary, options);
             writer.WritePropertyName("compareItems"u8);
@@ -123,8 +134,8 @@ namespace Azure.AI.Projects
                 return null;
             }
             string testingCriteria = default;
-            string metric = default;
-            string evaluator = default;
+            string metricName = default;
+            string evaluatorName = default;
             EvalRunResultSummary baselineRunSummary = default;
             IList<EvalRunResultCompareItem> compareItems = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
@@ -137,12 +148,12 @@ namespace Azure.AI.Projects
                 }
                 if (prop.NameEquals("metric"u8))
                 {
-                    metric = prop.Value.GetString();
+                    metricName = prop.Value.GetString();
                     continue;
                 }
                 if (prop.NameEquals("evaluator"u8))
                 {
-                    evaluator = prop.Value.GetString();
+                    evaluatorName = prop.Value.GetString();
                     continue;
                 }
                 if (prop.NameEquals("baselineRunSummary"u8))
@@ -167,21 +178,11 @@ namespace Azure.AI.Projects
             }
             return new EvalRunResultComparison(
                 testingCriteria,
-                metric,
-                evaluator,
+                metricName,
+                evaluatorName,
                 baselineRunSummary,
                 compareItems,
                 additionalBinaryDataProperties);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<EvalRunResultComparison>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        EvalRunResultComparison IPersistableModel<EvalRunResultComparison>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<EvalRunResultComparison>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

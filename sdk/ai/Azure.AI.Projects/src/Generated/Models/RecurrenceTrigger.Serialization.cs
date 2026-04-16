@@ -6,11 +6,12 @@ using System;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Evaluation
 {
     /// <summary> Recurrence based trigger. </summary>
-    public partial class RecurrenceTrigger : Trigger, IJsonModel<RecurrenceTrigger>
+    public partial class RecurrenceTrigger : ScheduleTrigger, IJsonModel<RecurrenceTrigger>
     {
         /// <summary> Initializes a new instance of <see cref="RecurrenceTrigger"/> for deserialization. </summary>
         internal RecurrenceTrigger()
@@ -19,7 +20,7 @@ namespace Azure.AI.Projects
 
         /// <param name="data"> The data to parse. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
-        protected override Trigger PersistableModelCreateCore(BinaryData data, ModelReaderWriterOptions options)
+        protected override ScheduleTrigger PersistableModelCreateCore(BinaryData data, ModelReaderWriterOptions options)
         {
             string format = options.Format == "W" ? ((IPersistableModel<RecurrenceTrigger>)this).GetFormatFromOptions(options) : options.Format;
             switch (format)
@@ -47,6 +48,16 @@ namespace Azure.AI.Projects
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<RecurrenceTrigger>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        RecurrenceTrigger IPersistableModel<RecurrenceTrigger>.Create(BinaryData data, ModelReaderWriterOptions options) => (RecurrenceTrigger)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<RecurrenceTrigger>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<RecurrenceTrigger>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -69,12 +80,12 @@ namespace Azure.AI.Projects
             if (Optional.IsDefined(StartTime))
             {
                 writer.WritePropertyName("startTime"u8);
-                writer.WriteStringValue(StartTime);
+                writer.WriteStringValue(StartTime.Value, "O");
             }
             if (Optional.IsDefined(EndTime))
             {
                 writer.WritePropertyName("endTime"u8);
-                writer.WriteStringValue(EndTime);
+                writer.WriteStringValue(EndTime.Value, "O");
             }
             if (Optional.IsDefined(TimeZone))
             {
@@ -93,7 +104,7 @@ namespace Azure.AI.Projects
 
         /// <param name="reader"> The JSON reader. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
-        protected override Trigger JsonModelCreateCore(ref Utf8JsonReader reader, ModelReaderWriterOptions options)
+        protected override ScheduleTrigger JsonModelCreateCore(ref Utf8JsonReader reader, ModelReaderWriterOptions options)
         {
             string format = options.Format == "W" ? ((IPersistableModel<RecurrenceTrigger>)this).GetFormatFromOptions(options) : options.Format;
             if (format != "J")
@@ -114,8 +125,8 @@ namespace Azure.AI.Projects
             }
             TriggerType @type = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
-            string startTime = default;
-            string endTime = default;
+            DateTimeOffset? startTime = default;
+            DateTimeOffset? endTime = default;
             string timeZone = default;
             int interval = default;
             RecurrenceSchedule schedule = default;
@@ -128,12 +139,20 @@ namespace Azure.AI.Projects
                 }
                 if (prop.NameEquals("startTime"u8))
                 {
-                    startTime = prop.Value.GetString();
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    startTime = prop.Value.GetDateTimeOffset("O");
                     continue;
                 }
                 if (prop.NameEquals("endTime"u8))
                 {
-                    endTime = prop.Value.GetString();
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    endTime = prop.Value.GetDateTimeOffset("O");
                     continue;
                 }
                 if (prop.NameEquals("timeZone"u8))
@@ -165,15 +184,5 @@ namespace Azure.AI.Projects
                 interval,
                 schedule);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<RecurrenceTrigger>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        RecurrenceTrigger IPersistableModel<RecurrenceTrigger>.Create(BinaryData data, ModelReaderWriterOptions options) => (RecurrenceTrigger)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<RecurrenceTrigger>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

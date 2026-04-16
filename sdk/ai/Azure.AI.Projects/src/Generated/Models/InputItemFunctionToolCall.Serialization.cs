@@ -47,6 +47,16 @@ namespace Azure.AI.Projects
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InputItemFunctionToolCall>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InputItemFunctionToolCall IPersistableModel<InputItemFunctionToolCall>.Create(BinaryData data, ModelReaderWriterOptions options) => (InputItemFunctionToolCall)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InputItemFunctionToolCall>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InputItemFunctionToolCall>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -66,13 +76,18 @@ namespace Azure.AI.Projects
                 throw new FormatException($"The model {nameof(InputItemFunctionToolCall)} does not support writing '{format}' format.");
             }
             base.JsonModelWriteCore(writer, options);
-            if (Optional.IsDefined(Id))
+            if (options.Format != "W")
             {
                 writer.WritePropertyName("id"u8);
                 writer.WriteStringValue(Id);
             }
             writer.WritePropertyName("call_id"u8);
             writer.WriteStringValue(CallId);
+            if (Optional.IsDefined(Namespace))
+            {
+                writer.WritePropertyName("namespace"u8);
+                writer.WriteStringValue(Namespace);
+            }
             writer.WritePropertyName("name"u8);
             writer.WriteStringValue(Name);
             writer.WritePropertyName("arguments"u8);
@@ -113,6 +128,7 @@ namespace Azure.AI.Projects
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             string id = default;
             string callId = default;
+            string @namespace = default;
             string name = default;
             string arguments = default;
             InputItemFunctionToolCallStatus? status = default;
@@ -131,6 +147,11 @@ namespace Azure.AI.Projects
                 if (prop.NameEquals("call_id"u8))
                 {
                     callId = prop.Value.GetString();
+                    continue;
+                }
+                if (prop.NameEquals("namespace"u8))
+                {
+                    @namespace = prop.Value.GetString();
                     continue;
                 }
                 if (prop.NameEquals("name"u8))
@@ -162,19 +183,10 @@ namespace Azure.AI.Projects
                 additionalBinaryDataProperties,
                 id,
                 callId,
+                @namespace,
                 name,
                 arguments,
                 status);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InputItemFunctionToolCall>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InputItemFunctionToolCall IPersistableModel<InputItemFunctionToolCall>.Create(BinaryData data, ModelReaderWriterOptions options) => (InputItemFunctionToolCall)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InputItemFunctionToolCall>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

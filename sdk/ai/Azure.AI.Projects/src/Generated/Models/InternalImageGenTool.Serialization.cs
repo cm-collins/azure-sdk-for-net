@@ -42,6 +42,16 @@ namespace OpenAI
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InternalImageGenTool>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InternalImageGenTool IPersistableModel<InternalImageGenTool>.Create(BinaryData data, ModelReaderWriterOptions options) => (InternalImageGenTool)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InternalImageGenTool>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InternalImageGenTool>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -111,6 +121,21 @@ namespace OpenAI
                 writer.WritePropertyName("partial_images"u8);
                 writer.WriteNumberValue(PartialImages.Value);
             }
+            if (Optional.IsDefined(Action))
+            {
+                writer.WritePropertyName("action"u8);
+                writer.WriteStringValue(Action.Value.ToSerialString());
+            }
+            if (Optional.IsDefined(Name))
+            {
+                writer.WritePropertyName("name"u8);
+                writer.WriteStringValue(Name);
+            }
+            if (Optional.IsDefined(Description))
+            {
+                writer.WritePropertyName("description"u8);
+                writer.WriteStringValue(Description);
+            }
         }
 
         /// <param name="reader"> The JSON reader. </param>
@@ -150,6 +175,9 @@ namespace OpenAI
             InputFidelity? inputFidelity = default;
             InternalImageGenToolInputImageMask inputImageMask = default;
             long? partialImages = default;
+            ImageGenActionEnum? action = default;
+            string name = default;
+            string description = default;
             foreach (var prop in element.EnumerateObject())
             {
                 if (prop.NameEquals("type"u8))
@@ -248,6 +276,25 @@ namespace OpenAI
                     partialImages = prop.Value.GetInt64();
                     continue;
                 }
+                if (prop.NameEquals("action"u8))
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    action = prop.Value.GetString().ToImageGenActionEnum();
+                    continue;
+                }
+                if (prop.NameEquals("name"u8))
+                {
+                    name = prop.Value.GetString();
+                    continue;
+                }
+                if (prop.NameEquals("description"u8))
+                {
+                    description = prop.Value.GetString();
+                    continue;
+                }
                 if (options.Format != "W")
                 {
                     additionalBinaryDataProperties.Add(prop.Name, BinaryData.FromString(prop.Value.GetRawText()));
@@ -265,17 +312,10 @@ namespace OpenAI
                 background,
                 inputFidelity,
                 inputImageMask,
-                partialImages);
+                partialImages,
+                action,
+                name,
+                description);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InternalImageGenTool>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InternalImageGenTool IPersistableModel<InternalImageGenTool>.Create(BinaryData data, ModelReaderWriterOptions options) => (InternalImageGenTool)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InternalImageGenTool>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

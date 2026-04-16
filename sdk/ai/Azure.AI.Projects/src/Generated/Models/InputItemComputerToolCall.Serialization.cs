@@ -48,6 +48,16 @@ namespace Azure.AI.Projects
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InputItemComputerToolCall>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InputItemComputerToolCall IPersistableModel<InputItemComputerToolCall>.Create(BinaryData data, ModelReaderWriterOptions options) => (InputItemComputerToolCall)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InputItemComputerToolCall>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InputItemComputerToolCall>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -71,8 +81,21 @@ namespace Azure.AI.Projects
             writer.WriteStringValue(Id);
             writer.WritePropertyName("call_id"u8);
             writer.WriteStringValue(CallId);
-            writer.WritePropertyName("action"u8);
-            writer.WriteObjectValue(Action, options);
+            if (Optional.IsDefined(Action))
+            {
+                writer.WritePropertyName("action"u8);
+                writer.WriteObjectValue(Action, options);
+            }
+            if (Optional.IsCollectionDefined(Actions))
+            {
+                writer.WritePropertyName("actions"u8);
+                writer.WriteStartArray();
+                foreach (InternalComputerAction item in Actions)
+                {
+                    writer.WriteObjectValue(item, options);
+                }
+                writer.WriteEndArray();
+            }
             writer.WritePropertyName("pending_safety_checks"u8);
             writer.WriteStartArray();
             foreach (ComputerCallSafetyCheckParam item in PendingSafetyChecks)
@@ -114,6 +137,7 @@ namespace Azure.AI.Projects
             string id = default;
             string callId = default;
             InternalComputerAction action = default;
+            IList<InternalComputerAction> actions = default;
             IList<ComputerCallSafetyCheckParam> pendingSafetyChecks = default;
             InputItemComputerToolCallStatus status = default;
             foreach (var prop in element.EnumerateObject())
@@ -135,7 +159,25 @@ namespace Azure.AI.Projects
                 }
                 if (prop.NameEquals("action"u8))
                 {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
                     action = InternalComputerAction.DeserializeInternalComputerAction(prop.Value, options);
+                    continue;
+                }
+                if (prop.NameEquals("actions"u8))
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    List<InternalComputerAction> array = new List<InternalComputerAction>();
+                    foreach (var item in prop.Value.EnumerateArray())
+                    {
+                        array.Add(InternalComputerAction.DeserializeInternalComputerAction(item, options));
+                    }
+                    actions = array;
                     continue;
                 }
                 if (prop.NameEquals("pending_safety_checks"u8))
@@ -164,18 +206,9 @@ namespace Azure.AI.Projects
                 id,
                 callId,
                 action,
+                actions ?? new ChangeTrackingList<InternalComputerAction>(),
                 pendingSafetyChecks,
                 status);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InputItemComputerToolCall>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InputItemComputerToolCall IPersistableModel<InputItemComputerToolCall>.Create(BinaryData data, ModelReaderWriterOptions options) => (InputItemComputerToolCall)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InputItemComputerToolCall>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

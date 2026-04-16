@@ -4,8 +4,6 @@
 # nullable enable
 
 using System;
-using System.ClientModel;
-using System.ClientModel.Primitives;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -14,6 +12,7 @@ using Azure.Storage.Blobs;
 
 namespace Azure.AI.Projects
 {
+    [CodeGenType("AIProjectDatasetsOperations")]
     public partial class AIProjectDatasetsOperations
     {
         private readonly AuthenticationTokenProvider _tokenProvider;

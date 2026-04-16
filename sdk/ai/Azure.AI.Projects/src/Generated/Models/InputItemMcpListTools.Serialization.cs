@@ -48,6 +48,16 @@ namespace Azure.AI.Projects
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InputItemMcpListTools>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InputItemMcpListTools IPersistableModel<InputItemMcpListTools>.Create(BinaryData data, ModelReaderWriterOptions options) => (InputItemMcpListTools)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InputItemMcpListTools>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InputItemMcpListTools>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -81,7 +91,7 @@ namespace Azure.AI.Projects
             if (Optional.IsDefined(Error))
             {
                 writer.WritePropertyName("error"u8);
-                writer.WriteStringValue(Error);
+                writer.WriteObjectValue(Error, options);
             }
         }
 
@@ -115,7 +125,7 @@ namespace Azure.AI.Projects
             string id = default;
             string serverLabel = default;
             IList<InternalMCPListToolsTool> tools = default;
-            string error = default;
+            RealtimeMCPError error = default;
             foreach (var prop in element.EnumerateObject())
             {
                 if (prop.NameEquals("type"u8))
@@ -147,10 +157,9 @@ namespace Azure.AI.Projects
                 {
                     if (prop.Value.ValueKind == JsonValueKind.Null)
                     {
-                        error = null;
                         continue;
                     }
-                    error = prop.Value.GetString();
+                    error = RealtimeMCPError.DeserializeRealtimeMCPError(prop.Value, options);
                     continue;
                 }
                 if (options.Format != "W")
@@ -166,15 +175,5 @@ namespace Azure.AI.Projects
                 tools,
                 error);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InputItemMcpListTools>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InputItemMcpListTools IPersistableModel<InputItemMcpListTools>.Create(BinaryData data, ModelReaderWriterOptions options) => (InputItemMcpListTools)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InputItemMcpListTools>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

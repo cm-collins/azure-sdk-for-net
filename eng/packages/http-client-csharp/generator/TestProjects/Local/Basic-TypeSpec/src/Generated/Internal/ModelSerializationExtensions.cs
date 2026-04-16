@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.Json;
 using System.Xml;
 using System.Xml.Linq;
+using Azure.Core;
 
 namespace BasicTypeSpec
 {
@@ -311,10 +312,13 @@ namespace BasicTypeSpec
             writer.WriteValue(TypeFormatters.ToString(value, format));
         }
 
-        public static void WriteObjectValue<T>(this XmlWriter writer, T value, ModelReaderWriterOptions options = null)
+        public static void WriteObjectValue<T>(this XmlWriter writer, T value, ModelReaderWriterOptions options = null, string nameHint = null)
         {
             switch (value)
             {
+                case IXmlSerializable xmlSerializable:
+                    xmlSerializable.Write(writer, nameHint);
+                    break;
                 case IPersistableModel<T> persistableModel:
                     BinaryData data = ModelReaderWriter.Write(persistableModel, options ?? WireOptions, BasicTypeSpecContext.Default);
                     using (Stream stream = data.ToStream())
@@ -322,14 +326,27 @@ namespace BasicTypeSpec
                         using (XmlReader reader = XmlReader.Create(stream, XmlReaderSettings))
                         {
                             reader.MoveToContent();
-                            reader.ReadStartElement();
-                            while (reader.NodeType != XmlNodeType.EndElement)
+                            if (nameHint != null)
                             {
-                                writer.WriteNode(reader, true);
+                                writer.WriteStartElement(nameHint);
+                                reader.ReadStartElement();
+                                while (reader.NodeType != XmlNodeType.EndElement)
+                                {
+                                    writer.WriteNode(reader, true);
+                                }
+                                writer.WriteEndElement();
+                            }
+                            else
+                            {
+                                reader.ReadStartElement();
+                                while (reader.NodeType != XmlNodeType.EndElement)
+                                {
+                                    writer.WriteNode(reader, true);
+                                }
                             }
                         }
                     }
-                    break;
+                    return;
                 default:
                     throw new NotSupportedException($"Not supported type {typeof(T)}");
             }

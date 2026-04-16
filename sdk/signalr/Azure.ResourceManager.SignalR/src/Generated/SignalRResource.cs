@@ -89,7 +89,7 @@ namespace Azure.ResourceManager.SignalR
         {
             if (id.ResourceType != ResourceType)
             {
-                throw new ArgumentException(string.Format("Invalid resource type {0} expected {1}", id.ResourceType, ResourceType), id);
+                throw new ArgumentException(string.Format("Invalid resource type {0} expected {1}", id.ResourceType, ResourceType), nameof(id));
             }
         }
 
@@ -434,7 +434,13 @@ namespace Azure.ResourceManager.SignalR
             {
                 CancellationToken = cancellationToken
             };
-            return new SignalRResourcesGetSignalRPrivateLinkResourcesAsyncCollectionResultOfT(_signalRResourcesRestClient, Guid.Parse(Id.SubscriptionId), Id.ResourceGroupName, Id.Name, context);
+            return new SignalRResourcesGetSignalRPrivateLinkResourcesAsyncCollectionResultOfT(
+                _signalRResourcesRestClient,
+                Guid.Parse(Id.SubscriptionId),
+                Id.ResourceGroupName,
+                Id.Name,
+                context,
+                "SignalRResource.GetSignalRPrivateLinkResources");
         }
 
         /// <summary>
@@ -466,7 +472,13 @@ namespace Azure.ResourceManager.SignalR
             {
                 CancellationToken = cancellationToken
             };
-            return new SignalRResourcesGetSignalRPrivateLinkResourcesCollectionResultOfT(_signalRResourcesRestClient, Guid.Parse(Id.SubscriptionId), Id.ResourceGroupName, Id.Name, context);
+            return new SignalRResourcesGetSignalRPrivateLinkResourcesCollectionResultOfT(
+                _signalRResourcesRestClient,
+                Guid.Parse(Id.SubscriptionId),
+                Id.ResourceGroupName,
+                Id.Name,
+                context,
+                "SignalRResource.GetSignalRPrivateLinkResources");
         }
 
         /// <summary>
@@ -594,7 +606,13 @@ namespace Azure.ResourceManager.SignalR
             {
                 CancellationToken = cancellationToken
             };
-            return new SignalRResourcesGetSkusAsyncCollectionResultOfT(_signalRResourcesRestClient, Guid.Parse(Id.SubscriptionId), Id.ResourceGroupName, Id.Name, context);
+            return new SignalRResourcesGetSkusAsyncCollectionResultOfT(
+                _signalRResourcesRestClient,
+                Guid.Parse(Id.SubscriptionId),
+                Id.ResourceGroupName,
+                Id.Name,
+                context,
+                "SignalRResource.GetSkus");
         }
 
         /// <summary>
@@ -626,7 +644,13 @@ namespace Azure.ResourceManager.SignalR
             {
                 CancellationToken = cancellationToken
             };
-            return new SignalRResourcesGetSkusCollectionResultOfT(_signalRResourcesRestClient, Guid.Parse(Id.SubscriptionId), Id.ResourceGroupName, Id.Name, context);
+            return new SignalRResourcesGetSkusCollectionResultOfT(
+                _signalRResourcesRestClient,
+                Guid.Parse(Id.SubscriptionId),
+                Id.ResourceGroupName,
+                Id.Name,
+                context,
+                "SignalRResource.GetSkus");
         }
 
         /// <summary>
@@ -1249,43 +1273,6 @@ namespace Azure.ResourceManager.SignalR
             Argument.AssertNotNullOrEmpty(replicaName, nameof(replicaName));
 
             return GetSignalRReplicas().Get(replicaName, cancellationToken);
-        }
-
-        /// <summary> Gets a collection of SignalRReplicaSharedPrivateLinkResources in the <see cref="SignalRResource"/>. </summary>
-        /// <returns> An object representing collection of SignalRReplicaSharedPrivateLinkResources and their operations over a SignalRReplicaSharedPrivateLinkResource. </returns>
-        public virtual SignalRReplicaSharedPrivateLinkResourceCollection GetSignalRReplicaSharedPrivateLinkResources()
-        {
-            return GetCachedClient(client => new SignalRReplicaSharedPrivateLinkResourceCollection(client, Id));
-        }
-
-        /// <summary> Get the specified shared private link resource. </summary>
-        /// <param name="replicaName"> The name of the Replica. </param>
-        /// <param name="sharedPrivateLinkResourceName"> The name of the SharedPrivateLinkResource. </param>
-        /// <param name="cancellationToken"> The cancellation token to use. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="replicaName"/> or <paramref name="sharedPrivateLinkResourceName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="replicaName"/> or <paramref name="sharedPrivateLinkResourceName"/> is an empty string, and was expected to be non-empty. </exception>
-        [ForwardsClientCalls]
-        public virtual async Task<Response<SignalRReplicaSharedPrivateLinkResource>> GetSignalRReplicaSharedPrivateLinkResourceAsync(string replicaName, string sharedPrivateLinkResourceName, CancellationToken cancellationToken = default)
-        {
-            Argument.AssertNotNullOrEmpty(replicaName, nameof(replicaName));
-            Argument.AssertNotNullOrEmpty(sharedPrivateLinkResourceName, nameof(sharedPrivateLinkResourceName));
-
-            return await GetSignalRReplicaSharedPrivateLinkResources().GetAsync(replicaName, sharedPrivateLinkResourceName, cancellationToken).ConfigureAwait(false);
-        }
-
-        /// <summary> Get the specified shared private link resource. </summary>
-        /// <param name="replicaName"> The name of the Replica. </param>
-        /// <param name="sharedPrivateLinkResourceName"> The name of the SharedPrivateLinkResource. </param>
-        /// <param name="cancellationToken"> The cancellation token to use. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="replicaName"/> or <paramref name="sharedPrivateLinkResourceName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="replicaName"/> or <paramref name="sharedPrivateLinkResourceName"/> is an empty string, and was expected to be non-empty. </exception>
-        [ForwardsClientCalls]
-        public virtual Response<SignalRReplicaSharedPrivateLinkResource> GetSignalRReplicaSharedPrivateLinkResource(string replicaName, string sharedPrivateLinkResourceName, CancellationToken cancellationToken = default)
-        {
-            Argument.AssertNotNullOrEmpty(replicaName, nameof(replicaName));
-            Argument.AssertNotNullOrEmpty(sharedPrivateLinkResourceName, nameof(sharedPrivateLinkResourceName));
-
-            return GetSignalRReplicaSharedPrivateLinkResources().Get(replicaName, sharedPrivateLinkResourceName, cancellationToken);
         }
 
         /// <summary> Gets a collection of SignalRSharedPrivateLinkResources in the <see cref="SignalRResource"/>. </summary>

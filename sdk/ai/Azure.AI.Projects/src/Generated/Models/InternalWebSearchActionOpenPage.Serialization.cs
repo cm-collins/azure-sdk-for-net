@@ -12,11 +12,6 @@ namespace OpenAI
 {
     internal partial class InternalWebSearchActionOpenPage : IJsonModel<InternalWebSearchActionOpenPage>
     {
-        /// <summary> Initializes a new instance of <see cref="InternalWebSearchActionOpenPage"/> for deserialization. </summary>
-        internal InternalWebSearchActionOpenPage()
-        {
-        }
-
         /// <param name="data"> The data to parse. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         protected virtual InternalWebSearchActionOpenPage PersistableModelCreateCore(BinaryData data, ModelReaderWriterOptions options)
@@ -47,6 +42,16 @@ namespace OpenAI
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InternalWebSearchActionOpenPage>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InternalWebSearchActionOpenPage IPersistableModel<InternalWebSearchActionOpenPage>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InternalWebSearchActionOpenPage>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InternalWebSearchActionOpenPage>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -67,8 +72,11 @@ namespace OpenAI
             }
             writer.WritePropertyName("type"u8);
             writer.WriteStringValue(Type);
-            writer.WritePropertyName("url"u8);
-            writer.WriteStringValue(Url.AbsoluteUri);
+            if (Optional.IsDefined(Url))
+            {
+                writer.WritePropertyName("url"u8);
+                writer.WriteStringValue(Url.AbsoluteUri);
+            }
             if (options.Format != "W" && _additionalBinaryDataProperties != null)
             {
                 foreach (var item in _additionalBinaryDataProperties)
@@ -123,7 +131,12 @@ namespace OpenAI
                 }
                 if (prop.NameEquals("url"u8))
                 {
-                    url = string.IsNullOrEmpty(prop.Value.GetString()) ? null : new Uri(prop.Value.GetString());
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        url = null;
+                        continue;
+                    }
+                    url = string.IsNullOrEmpty(prop.Value.GetString()) ? null : new Uri(prop.Value.GetString(), UriKind.RelativeOrAbsolute);
                     continue;
                 }
                 if (options.Format != "W")
@@ -133,15 +146,5 @@ namespace OpenAI
             }
             return new InternalWebSearchActionOpenPage(@type, url, additionalBinaryDataProperties);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InternalWebSearchActionOpenPage>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InternalWebSearchActionOpenPage IPersistableModel<InternalWebSearchActionOpenPage>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InternalWebSearchActionOpenPage>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

@@ -62,11 +62,10 @@ namespace Azure.Compute.Batch
             options ??= new BatchClientOptions();
 
             ClientDiagnostics = new ClientDiagnostics(options, true);
-            _tokenCredential = credential;
 
             var pipelineOptions = new HttpPipelineOptions(options)
             {
-                PerRetryPolicies = { new BearerTokenAuthenticationPolicy(_tokenCredential, AuthorizationScopes) },
+                PerRetryPolicies = { new BearerTokenAuthenticationPolicy(credential, AuthorizationScopes) },
                 ResponseClassifier = new ResponseClassifier(),
                 RequestFailedDetailsParser = new BatchErrorDetailsParser()
             };
@@ -286,7 +285,7 @@ namespace Azure.Compute.Batch
             scope.Start();
             try
             {
-                Response response = await GetTaskFilePropertiesInternalAsync(jobId, taskId, filePath, timeOutInSeconds, ocpdate, null, null).ConfigureAwait(false);
+                Response response = await GetTaskFilePropertiesInternalAsync(jobId, taskId, filePath, timeOutInSeconds, ocpdate, null, new RequestContext { CancellationToken = cancellationToken }).ConfigureAwait(false);
                 return Response.FromValue(BatchFileProperties.FromResponse(response), response);
             }
             catch (Exception e)
@@ -335,7 +334,7 @@ namespace Azure.Compute.Batch
                     timeOutInSeconds,
                     ocpdate,
                     null,
-                    cancellationToken.CanBeCanceled ? new RequestContext { CancellationToken = cancellationToken } : null);
+                    new RequestContext { CancellationToken = cancellationToken });
                 return Response.FromValue(BatchFileProperties.FromResponse(response), response);
             }
             catch (Exception e)
@@ -383,7 +382,7 @@ namespace Azure.Compute.Batch
                     timeOutInSeconds,
                     ocpdate,
                     null,
-                    cancellationToken.CanBeCanceled ? new RequestContext { CancellationToken = cancellationToken } : null).ConfigureAwait(false);
+                    new RequestContext { CancellationToken = cancellationToken }).ConfigureAwait(false);
                 return Response.FromValue(BatchFileProperties.FromResponse(response), response);
             }
             catch (Exception e)
@@ -424,7 +423,7 @@ namespace Azure.Compute.Batch
             scope.Start();
             try
             {
-                Response response = GetNodeFilePropertiesInternal(poolId, nodeId, filePath, timeOutInSeconds, ocpdate, null, null);
+                Response response = GetNodeFilePropertiesInternal(poolId, nodeId, filePath, timeOutInSeconds, ocpdate, null, new RequestContext { CancellationToken = cancellationToken });
                 return Response.FromValue(BatchFileProperties.FromResponse(response), response);
             }
             catch (Exception e)
@@ -465,7 +464,7 @@ namespace Azure.Compute.Batch
             Argument.AssertNotNull(pool, nameof(pool));
 
             using RequestContent content = pool;
-            Response response = await UpdatePoolAsync(poolId, pool, timeOutInSeconds, ocpdate, requestConditions, cancellationToken.CanBeCanceled ? new RequestContext { CancellationToken = cancellationToken } : null).ConfigureAwait(false);
+            Response response = await UpdatePoolAsync(poolId, pool, timeOutInSeconds, ocpdate, requestConditions, new RequestContext { CancellationToken = cancellationToken }).ConfigureAwait(false);
             return response;
         }
 
@@ -500,7 +499,7 @@ namespace Azure.Compute.Batch
             Argument.AssertNotNull(pool, nameof(pool));
 
             using RequestContent content = pool;
-            Response response = UpdatePool(poolId, content, timeOutInSeconds, ocpdate, requestConditions, cancellationToken.CanBeCanceled ? new RequestContext { CancellationToken = cancellationToken } : null);
+            Response response = UpdatePool(poolId, content, timeOutInSeconds, ocpdate, requestConditions, new RequestContext { CancellationToken = cancellationToken });
             return response;
         }
 
@@ -535,7 +534,7 @@ namespace Azure.Compute.Batch
             Argument.AssertNotNull(job, nameof(job));
 
             using RequestContent content = job;
-            Response response = await UpdateJobAsync(jobId, content, timeOutInSeconds, ocpdate, requestConditions, cancellationToken.CanBeCanceled ? new RequestContext { CancellationToken = cancellationToken } : null).ConfigureAwait(false);
+            Response response = await UpdateJobAsync(jobId, content, timeOutInSeconds, ocpdate, requestConditions, new RequestContext { CancellationToken = cancellationToken }).ConfigureAwait(false);
             return response;
         }
 
@@ -570,7 +569,7 @@ namespace Azure.Compute.Batch
             Argument.AssertNotNull(job, nameof(job));
 
             using RequestContent content = job;
-            Response response = UpdateJob(jobId, content, timeOutInSeconds, ocpdate, requestConditions, cancellationToken.CanBeCanceled ? new RequestContext { CancellationToken = cancellationToken } : null);
+            Response response = UpdateJob(jobId, content, timeOutInSeconds, ocpdate, requestConditions, new RequestContext { CancellationToken = cancellationToken });
             return response;
         }
 
@@ -605,7 +604,7 @@ namespace Azure.Compute.Batch
             Argument.AssertNotNull(jobSchedule, nameof(jobSchedule));
 
             using RequestContent content = jobSchedule;
-            Response response = await UpdateJobScheduleAsync(jobScheduleId, content, timeOutInSeconds, ocpdate, requestConditions, cancellationToken.CanBeCanceled ? new RequestContext { CancellationToken = cancellationToken } : null).ConfigureAwait(false);
+            Response response = await UpdateJobScheduleAsync(jobScheduleId, content, timeOutInSeconds, ocpdate, requestConditions, new RequestContext { CancellationToken = cancellationToken }).ConfigureAwait(false);
             return response;
         }
 
@@ -640,7 +639,7 @@ namespace Azure.Compute.Batch
             Argument.AssertNotNull(jobSchedule, nameof(jobSchedule));
 
             using RequestContent content = jobSchedule;
-            Response response = UpdateJobSchedule(jobScheduleId, content, timeOutInSeconds, ocpdate, requestConditions, cancellationToken.CanBeCanceled ? new RequestContext { CancellationToken = cancellationToken } : null);
+            Response response = UpdateJobSchedule(jobScheduleId, content, timeOutInSeconds, ocpdate, requestConditions, new RequestContext { CancellationToken = cancellationToken });
             return response;
         }
 

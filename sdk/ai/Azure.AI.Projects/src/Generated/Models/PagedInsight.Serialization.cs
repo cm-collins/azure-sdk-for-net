@@ -8,8 +8,9 @@ using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
 using Azure.AI.Projects;
+using Azure.AI.Projects.Evaluation;
 
-namespace Azure.Core.Foundations
+namespace Azure.Core
 {
     /// <summary> Paged collection of Insight items. </summary>
     internal partial class PagedInsight : IJsonModel<PagedInsight>
@@ -49,6 +50,16 @@ namespace Azure.Core.Foundations
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<PagedInsight>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        PagedInsight IPersistableModel<PagedInsight>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<PagedInsight>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="result"> The <see cref="ClientResult"/> to deserialize the <see cref="PagedInsight"/> from. </param>
         public static explicit operator PagedInsight(ClientResult result)
         {
@@ -77,7 +88,7 @@ namespace Azure.Core.Foundations
             }
             writer.WritePropertyName("value"u8);
             writer.WriteStartArray();
-            foreach (Insight item in Value)
+            foreach (ProjectsInsight item in Value)
             {
                 writer.WriteObjectValue(item, options);
             }
@@ -129,18 +140,17 @@ namespace Azure.Core.Foundations
             {
                 return null;
             }
-            IList<Insight> value = default;
+            IList<ProjectsInsight> value = default;
             Uri nextLink = default;
-            string clientRequestId = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             foreach (var prop in element.EnumerateObject())
             {
                 if (prop.NameEquals("value"u8))
                 {
-                    List<Insight> array = new List<Insight>();
+                    List<ProjectsInsight> array = new List<ProjectsInsight>();
                     foreach (var item in prop.Value.EnumerateArray())
                     {
-                        array.Add(Insight.DeserializeInsight(item, options));
+                        array.Add(ProjectsInsight.DeserializeProjectsInsight(item, options));
                     }
                     value = array;
                     continue;
@@ -151,7 +161,7 @@ namespace Azure.Core.Foundations
                     {
                         continue;
                     }
-                    nextLink = string.IsNullOrEmpty(prop.Value.GetString()) ? null : new Uri(prop.Value.GetString());
+                    nextLink = string.IsNullOrEmpty(prop.Value.GetString()) ? null : new Uri(prop.Value.GetString(), UriKind.RelativeOrAbsolute);
                     continue;
                 }
                 if (options.Format != "W")
@@ -159,17 +169,7 @@ namespace Azure.Core.Foundations
                     additionalBinaryDataProperties.Add(prop.Name, BinaryData.FromString(prop.Value.GetRawText()));
                 }
             }
-            return new PagedInsight(value, nextLink, clientRequestId, additionalBinaryDataProperties);
+            return new PagedInsight(value, nextLink, additionalBinaryDataProperties);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<PagedInsight>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        PagedInsight IPersistableModel<PagedInsight>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<PagedInsight>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

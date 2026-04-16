@@ -42,6 +42,16 @@ namespace OpenAI
             }
         }
 
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<InternalWebSearchPreviewTool>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        InternalWebSearchPreviewTool IPersistableModel<InternalWebSearchPreviewTool>.Create(BinaryData data, ModelReaderWriterOptions options) => (InternalWebSearchPreviewTool)PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<InternalWebSearchPreviewTool>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
+
         /// <param name="writer"> The JSON writer. </param>
         /// <param name="options"> The client options for reading and writing models. </param>
         void IJsonModel<InternalWebSearchPreviewTool>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
@@ -70,6 +80,16 @@ namespace OpenAI
             {
                 writer.WritePropertyName("search_context_size"u8);
                 writer.WriteStringValue(SearchContextSize.Value.ToSerialString());
+            }
+            if (Optional.IsCollectionDefined(SearchContentTypes))
+            {
+                writer.WritePropertyName("search_content_types"u8);
+                writer.WriteStartArray();
+                foreach (SearchContentType item in SearchContentTypes)
+                {
+                    writer.WriteStringValue(item.ToSerialString());
+                }
+                writer.WriteEndArray();
             }
         }
 
@@ -102,6 +122,7 @@ namespace OpenAI
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             InternalApproximateLocation userLocation = default;
             SearchContextSize? searchContextSize = default;
+            IList<SearchContentType> searchContentTypes = default;
             foreach (var prop in element.EnumerateObject())
             {
                 if (prop.NameEquals("type"u8))
@@ -128,22 +149,26 @@ namespace OpenAI
                     searchContextSize = prop.Value.GetString().ToSearchContextSize();
                     continue;
                 }
+                if (prop.NameEquals("search_content_types"u8))
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    List<SearchContentType> array = new List<SearchContentType>();
+                    foreach (var item in prop.Value.EnumerateArray())
+                    {
+                        array.Add(item.GetString().ToSearchContentType());
+                    }
+                    searchContentTypes = array;
+                    continue;
+                }
                 if (options.Format != "W")
                 {
                     additionalBinaryDataProperties.Add(prop.Name, BinaryData.FromString(prop.Value.GetRawText()));
                 }
             }
-            return new InternalWebSearchPreviewTool(@type, additionalBinaryDataProperties, userLocation, searchContextSize);
+            return new InternalWebSearchPreviewTool(@type, additionalBinaryDataProperties, userLocation, searchContextSize, searchContentTypes ?? new ChangeTrackingList<SearchContentType>());
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<InternalWebSearchPreviewTool>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        InternalWebSearchPreviewTool IPersistableModel<InternalWebSearchPreviewTool>.Create(BinaryData data, ModelReaderWriterOptions options) => (InternalWebSearchPreviewTool)PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<InternalWebSearchPreviewTool>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

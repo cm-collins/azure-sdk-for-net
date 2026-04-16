@@ -7,8 +7,9 @@ using System.ClientModel;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.AI.Projects;
 
-namespace Azure.AI.Projects
+namespace Azure.AI.Projects.Evaluation
 {
     /// <summary> Schedule run model. </summary>
     public partial class ScheduleRun : IJsonModel<ScheduleRun>
@@ -47,6 +48,16 @@ namespace Azure.AI.Projects
                     throw new FormatException($"The model {nameof(ScheduleRun)} does not support writing '{options.Format}' format.");
             }
         }
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        BinaryData IPersistableModel<ScheduleRun>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
+
+        /// <param name="data"> The data to parse. </param>
+        /// <param name="options"> The client options for reading and writing models. </param>
+        ScheduleRun IPersistableModel<ScheduleRun>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
+
+        /// <param name="options"> The client options for reading and writing models. </param>
+        string IPersistableModel<ScheduleRun>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
 
         /// <param name="result"> The <see cref="ClientResult"/> to deserialize the <see cref="ScheduleRun"/> from. </param>
         public static explicit operator ScheduleRun(ClientResult result)
@@ -89,7 +100,7 @@ namespace Azure.AI.Projects
             if (Optional.IsDefined(TriggerTime))
             {
                 writer.WritePropertyName("triggerTime"u8);
-                writer.WriteStringValue(TriggerTime);
+                writer.WriteStringValue(TriggerTime.Value, "O");
             }
             if (options.Format != "W" && Optional.IsDefined(Error))
             {
@@ -157,7 +168,7 @@ namespace Azure.AI.Projects
             string runId = default;
             string scheduleId = default;
             bool success = default;
-            string triggerTime = default;
+            DateTimeOffset? triggerTime = default;
             string error = default;
             IReadOnlyDictionary<string, string> properties = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
@@ -180,7 +191,11 @@ namespace Azure.AI.Projects
                 }
                 if (prop.NameEquals("triggerTime"u8))
                 {
-                    triggerTime = prop.Value.GetString();
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    triggerTime = prop.Value.GetDateTimeOffset("O");
                     continue;
                 }
                 if (prop.NameEquals("error"u8))
@@ -219,15 +234,5 @@ namespace Azure.AI.Projects
                 properties,
                 additionalBinaryDataProperties);
         }
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        BinaryData IPersistableModel<ScheduleRun>.Write(ModelReaderWriterOptions options) => PersistableModelWriteCore(options);
-
-        /// <param name="data"> The data to parse. </param>
-        /// <param name="options"> The client options for reading and writing models. </param>
-        ScheduleRun IPersistableModel<ScheduleRun>.Create(BinaryData data, ModelReaderWriterOptions options) => PersistableModelCreateCore(data, options);
-
-        /// <param name="options"> The client options for reading and writing models. </param>
-        string IPersistableModel<ScheduleRun>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

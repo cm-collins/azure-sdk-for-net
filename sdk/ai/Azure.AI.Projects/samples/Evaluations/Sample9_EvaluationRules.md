@@ -16,21 +16,21 @@ To enable continuous evaluation, please assign project managed identity with the
 1. First, we need to create project client and read the environment variables which will be used in the next steps. We will also create an `EvaluationClient` to create evaluation.
 
 ```C# Snippet:Sample_CreateClients_EvaluationRules
-var endpoint = System.Environment.GetEnvironmentVariable("PROJECT_ENDPOINT");
-var modelDeploymentName = System.Environment.GetEnvironmentVariable("MODEL_DEPLOYMENT_NAME");
+var endpoint = System.Environment.GetEnvironmentVariable("FOUNDRY_PROJECT_ENDPOINT");
+var modelDeploymentName = System.Environment.GetEnvironmentVariable("FOUNDRY_MODEL_NAME");
 AIProjectClient projectClient = new(new Uri(endpoint), new DefaultAzureCredential());
-EvaluationClient evaluationClient = projectClient.OpenAI.GetEvaluationClient();
+EvaluationClient evaluationClient = projectClient.ProjectOpenAIClient.GetEvaluationClient();
 ```
 
 2. Create a target Agent to get responses from.
 
 Synchronous sample:
 ```C# Snippet:Sample_CreateAgent_EvaluationRules_Sync
-PromptAgentDefinition agentDefinition = new(model: modelDeploymentName)
+DeclarativeAgentDefinition agentDefinition = new(model: modelDeploymentName)
 {
     Instructions = "You are a helpful assistant that answers general questions",
 };
-AgentVersion agentVersion = projectClient.Agents.CreateAgentVersion(
+ProjectsAgentVersion agentVersion = projectClient.AgentAdministrationClient.CreateAgentVersion(
     agentName: "evalAgent",
     options: new(agentDefinition));
 Console.WriteLine($"Agent created (id: {agentVersion.Id}, name: {agentVersion.Name}, version: {agentVersion.Version})");
@@ -38,11 +38,11 @@ Console.WriteLine($"Agent created (id: {agentVersion.Id}, name: {agentVersion.Na
 
 Asynchronous sample:
 ```C# Snippet:Sample_CreateAgent_EvaluationRules_Async
-PromptAgentDefinition agentDefinition = new(model: modelDeploymentName)
+DeclarativeAgentDefinition agentDefinition = new(model: modelDeploymentName)
 {
     Instructions = "You are a helpful assistant that answers general questions",
 };
-AgentVersion agentVersion = await projectClient.Agents.CreateAgentVersionAsync(
+ProjectsAgentVersion agentVersion = await projectClient.AgentAdministrationClient.CreateAgentVersionAsync(
     agentName: "evalAgent",
     options: new(agentDefinition));
 Console.WriteLine($"Agent created (id: {agentVersion.Id}, name: {agentVersion.Name}, version: {agentVersion.Version})");
@@ -74,7 +74,7 @@ private BinaryData evaluationConfig = BinaryData.FromObjectAsJson(
 
 4. The `EvaluationClient` uses protocol methods i.e. they take in JSON in the form of `BinaryData` and return `ClientResult`, containing binary encoded JSON response, which can be retrieved using `GetRawResponse()` method. To simplify parsing JSON we will create helper methods. One of the methods is named `ParseClientResult`. It gets string values of the top-level JSON properties. In the next section we will use it to get evaluation name and ID.
 
-```C# Snippet:Sampple_GetStringValues_EvaluationRules
+```C# Snippet:Sample_GetStringValues_EvaluationRules
 private static Dictionary<string, string> ParseClientResult(ClientResult result, string[] expectedProperties)
 {
     Dictionary<string, string> results = [];
@@ -169,14 +169,14 @@ Console.WriteLine($"Continuous Evaluation Rule created (id: {continuousEvalRule.
 
 Synchronous sample:
 ```C# Snippet:Sample_CreateConversation_EvaluationRules_Sync
-ProjectConversation conversation = projectClient.OpenAI.Conversations.CreateProjectConversation();
-ProjectResponsesClient responseClient = projectClient.OpenAI.GetProjectResponsesClientForAgent(agentVersion, conversation.Id);
+ProjectConversation conversation = projectClient.ProjectOpenAIClient.GetProjectConversationsClient().CreateProjectConversation();
+ProjectResponsesClient responseClient = projectClient.ProjectOpenAIClient.GetProjectResponsesClientForAgent(new(name: agentVersion.Name, version: agentVersion.Version), conversation.Id);
 ```
 
 Asynchronous sample:
 ```C# Snippet:Sample_CreateConversation_EvaluationRules_Async
-ProjectConversation conversation = await projectClient.OpenAI.Conversations.CreateProjectConversationAsync();
-ProjectResponsesClient responseClient = projectClient.OpenAI.GetProjectResponsesClientForAgent(agentVersion, conversation.Id);
+ProjectConversation conversation = await projectClient.ProjectOpenAIClient.GetProjectConversationsClient().CreateProjectConversationAsync();
+ProjectResponsesClient responseClient = projectClient.ProjectOpenAIClient.GetProjectResponsesClientForAgent(new(name: agentVersion.Name, version: agentVersion.Version), conversation.Id);
 ```
 
 9. To monitor the evaluation runs we will implement two methods `GetRunIDs` and `GetRunIDsAsync` for synchronous and asynchronous runs respectively.
@@ -401,7 +401,7 @@ while (!allDone);
 
 12. Define the method to get the error message and code from the response if any.
 
-```C# Snippet:Sampple_GetError_EvaluationRules
+```C# Snippet:Sample_GetError_EvaluationRules
 private static string GetErrorMessageOrEmpty(ClientResult result)
 {
     string error = "";
@@ -495,9 +495,9 @@ Console.WriteLine($"To check evaluation runs, please open {reportUri} from the b
 
 Synchronous sample:
 ```C# Snippet:Sample_Cleanup_EvaluationRules_Sync
-projectClient.OpenAI.Conversations.DeleteConversation(conversation.Id);
+projectClient.ProjectOpenAIClient.GetProjectConversationsClient().DeleteConversation(conversation.Id);
 projectClient.EvaluationRules.Delete(id: continuousEvalRule.Id);
-projectClient.Agents.DeleteAgentVersion(agentName: agentVersion.Name, agentVersion: agentVersion.Version);
+projectClient.AgentAdministrationClient.DeleteAgentVersion(agentName: agentVersion.Name, agentVersion: agentVersion.Version);
 // Warning! After this step the evaluations will be deleted and will not be available on Microsoft Foundry portal.
 // First we need to remove all runs.
 foreach (string runId in evaluationRunIds.Keys)
@@ -510,9 +510,9 @@ evaluationClient.DeleteEvaluation(evaluationId, new System.ClientModel.Primitive
 
 Asynchronous sample:
 ```C# Snippet:Sample_Cleanup_EvaluationRules_Async
-await projectClient.OpenAI.Conversations.DeleteConversationAsync(conversation.Id);
+await projectClient.ProjectOpenAIClient.GetProjectConversationsClient().DeleteConversationAsync(conversation.Id);
 await projectClient.EvaluationRules.DeleteAsync(id: continuousEvalRule.Id);
-await projectClient.Agents.DeleteAgentVersionAsync(agentName: agentVersion.Name, agentVersion: agentVersion.Version);
+await projectClient.AgentAdministrationClient.DeleteAgentVersionAsync(agentName: agentVersion.Name, agentVersion: agentVersion.Version);
 // Warning! After this step the evaluations will be deleted and will not be available on Microsoft Foundry portal.
 // First we need to remove all runs.
 foreach (string runId in evaluationRunIds.Keys)
