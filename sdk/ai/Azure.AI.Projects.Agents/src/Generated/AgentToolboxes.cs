@@ -38,167 +38,181 @@ namespace Azure.AI.Projects.Agents
         public ClientPipeline Pipeline { get; }
 
         /// <summary>
-        /// [Protocol Method] Create a new version of a toolbox. If the toolbox does not exist, it will be created.
+        /// [Protocol Method] Creates a new toolbox version, provisioning the toolbox itself if it does not already exist.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox. If the toolbox does not exist, it will be created. </param>
+        /// <param name="name"> The name of the toolbox. If the toolbox does not exist, it will be created. </param>
         /// <param name="content"> The content to send as the body of the request. </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="content"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="content"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual ClientResult CreateToolboxVersion(string toolboxName, BinaryContent content, RequestOptions options = null)
+        public virtual ClientResult CreateToolboxVersion(string name, BinaryContent content, RequestOptions options = null)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNull(content, nameof(content));
 
-            using PipelineMessage message = CreateCreateToolboxVersionRequest(toolboxName, content, options);
+            using PipelineMessage message = CreateCreateToolboxVersionRequest(name, content, options);
             return ClientResult.FromResponse(Pipeline.ProcessMessage(message, options));
         }
 
         /// <summary>
-        /// [Protocol Method] Create a new version of a toolbox. If the toolbox does not exist, it will be created.
+        /// [Protocol Method] Creates a new toolbox version, provisioning the toolbox itself if it does not already exist.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox. If the toolbox does not exist, it will be created. </param>
+        /// <param name="name"> The name of the toolbox. If the toolbox does not exist, it will be created. </param>
         /// <param name="content"> The content to send as the body of the request. </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="content"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="content"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual async Task<ClientResult> CreateToolboxVersionAsync(string toolboxName, BinaryContent content, RequestOptions options = null)
+        public virtual async Task<ClientResult> CreateToolboxVersionAsync(string name, BinaryContent content, RequestOptions options = null)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNull(content, nameof(content));
 
-            using PipelineMessage message = CreateCreateToolboxVersionRequest(toolboxName, content, options);
+            using PipelineMessage message = CreateCreateToolboxVersionRequest(name, content, options);
             return ClientResult.FromResponse(await Pipeline.ProcessMessageAsync(message, options).ConfigureAwait(false));
         }
 
-        /// <summary> Create a new version of a toolbox. If the toolbox does not exist, it will be created. </summary>
-        /// <param name="toolboxName"> The name of the toolbox. If the toolbox does not exist, it will be created. </param>
+        /// <summary> Creates a new toolbox version, provisioning the toolbox itself if it does not already exist. </summary>
+        /// <param name="name"> The name of the toolbox. If the toolbox does not exist, it will be created. </param>
         /// <param name="tools"> The list of tools to include in this version. </param>
         /// <param name="description"> A human-readable description of the toolbox. </param>
         /// <param name="metadata"> Arbitrary key-value metadata to associate with the toolbox. </param>
+        /// <param name="skills"> The list of skill sources to include in this version. A skill reference specifies a skill name and optionally a version. If version is omitted, the skill's default version is used. </param>
         /// <param name="policies"> Policy configuration for this toolbox version. </param>
         /// <param name="cancellationToken"> The cancellation token that can be used to cancel the operation. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="tools"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="tools"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
-        public virtual ClientResult<ToolboxVersion> CreateToolboxVersion(string toolboxName, IEnumerable<ProjectsAgentTool> tools, string description = default, IDictionary<string, string> metadata = default, ToolboxPolicies policies = default, CancellationToken cancellationToken = default)
+        public virtual ClientResult<ToolboxVersion> CreateToolboxVersion(string name, IEnumerable<ProjectsAgentTool> tools, string description = default, IDictionary<string, string> metadata = default, IEnumerable<ToolboxSkill> skills = default, ToolboxPolicies policies = default, CancellationToken cancellationToken = default)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNull(tools, nameof(tools));
 
-            CreateToolboxVersionRequest spreadModel = new CreateToolboxVersionRequest(description, metadata ?? new ChangeTrackingDictionary<string, string>(), tools?.ToList() as IList<ProjectsAgentTool> ?? new ChangeTrackingList<ProjectsAgentTool>(), policies, default);
-            ClientResult result = CreateToolboxVersion(toolboxName, spreadModel, cancellationToken.ToRequestOptions());
+            CreateToolboxVersionRequest spreadModel = new CreateToolboxVersionRequest(
+                description,
+                metadata ?? new ChangeTrackingDictionary<string, string>(),
+                tools?.ToList() as IList<ProjectsAgentTool> ?? new ChangeTrackingList<ProjectsAgentTool>(),
+                skills?.ToList() as IList<ToolboxSkill> ?? new ChangeTrackingList<ToolboxSkill>(),
+                policies,
+                default);
+            ClientResult result = CreateToolboxVersion(name, spreadModel, cancellationToken.ToRequestOptions());
             return ClientResult.FromValue((ToolboxVersion)result, result.GetRawResponse());
         }
 
-        /// <summary> Create a new version of a toolbox. If the toolbox does not exist, it will be created. </summary>
-        /// <param name="toolboxName"> The name of the toolbox. If the toolbox does not exist, it will be created. </param>
+        /// <summary> Creates a new toolbox version, provisioning the toolbox itself if it does not already exist. </summary>
+        /// <param name="name"> The name of the toolbox. If the toolbox does not exist, it will be created. </param>
         /// <param name="tools"> The list of tools to include in this version. </param>
         /// <param name="description"> A human-readable description of the toolbox. </param>
         /// <param name="metadata"> Arbitrary key-value metadata to associate with the toolbox. </param>
+        /// <param name="skills"> The list of skill sources to include in this version. A skill reference specifies a skill name and optionally a version. If version is omitted, the skill's default version is used. </param>
         /// <param name="policies"> Policy configuration for this toolbox version. </param>
         /// <param name="cancellationToken"> The cancellation token that can be used to cancel the operation. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="tools"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="tools"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
-        public virtual async Task<ClientResult<ToolboxVersion>> CreateToolboxVersionAsync(string toolboxName, IEnumerable<ProjectsAgentTool> tools, string description = default, IDictionary<string, string> metadata = default, ToolboxPolicies policies = default, CancellationToken cancellationToken = default)
+        public virtual async Task<ClientResult<ToolboxVersion>> CreateToolboxVersionAsync(string name, IEnumerable<ProjectsAgentTool> tools, string description = default, IDictionary<string, string> metadata = default, IEnumerable<ToolboxSkill> skills = default, ToolboxPolicies policies = default, CancellationToken cancellationToken = default)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNull(tools, nameof(tools));
 
-            CreateToolboxVersionRequest spreadModel = new CreateToolboxVersionRequest(description, metadata ?? new ChangeTrackingDictionary<string, string>(), tools?.ToList() as IList<ProjectsAgentTool> ?? new ChangeTrackingList<ProjectsAgentTool>(), policies, default);
-            ClientResult result = await CreateToolboxVersionAsync(toolboxName, spreadModel, cancellationToken.ToRequestOptions()).ConfigureAwait(false);
+            CreateToolboxVersionRequest spreadModel = new CreateToolboxVersionRequest(
+                description,
+                metadata ?? new ChangeTrackingDictionary<string, string>(),
+                tools?.ToList() as IList<ProjectsAgentTool> ?? new ChangeTrackingList<ProjectsAgentTool>(),
+                skills?.ToList() as IList<ToolboxSkill> ?? new ChangeTrackingList<ToolboxSkill>(),
+                policies,
+                default);
+            ClientResult result = await CreateToolboxVersionAsync(name, spreadModel, cancellationToken.ToRequestOptions()).ConfigureAwait(false);
             return ClientResult.FromValue((ToolboxVersion)result, result.GetRawResponse());
         }
 
         /// <summary>
-        /// [Protocol Method] Retrieve a toolbox.
+        /// [Protocol Method] Retrieves the specified toolbox and its current configuration.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox to retrieve. </param>
+        /// <param name="name"> The name of the toolbox to retrieve. </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual ClientResult GetToolbox(string toolboxName, RequestOptions options)
+        public virtual ClientResult GetToolbox(string name, RequestOptions options)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
 
-            using PipelineMessage message = CreateGetToolboxRequest(toolboxName, options);
+            using PipelineMessage message = CreateGetToolboxRequest(name, options);
             return ClientResult.FromResponse(Pipeline.ProcessMessage(message, options));
         }
 
         /// <summary>
-        /// [Protocol Method] Retrieve a toolbox.
+        /// [Protocol Method] Retrieves the specified toolbox and its current configuration.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox to retrieve. </param>
+        /// <param name="name"> The name of the toolbox to retrieve. </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual async Task<ClientResult> GetToolboxAsync(string toolboxName, RequestOptions options)
+        public virtual async Task<ClientResult> GetToolboxAsync(string name, RequestOptions options)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
 
-            using PipelineMessage message = CreateGetToolboxRequest(toolboxName, options);
+            using PipelineMessage message = CreateGetToolboxRequest(name, options);
             return ClientResult.FromResponse(await Pipeline.ProcessMessageAsync(message, options).ConfigureAwait(false));
         }
 
-        /// <summary> Retrieve a toolbox. </summary>
-        /// <param name="toolboxName"> The name of the toolbox to retrieve. </param>
+        /// <summary> Retrieves the specified toolbox and its current configuration. </summary>
+        /// <param name="name"> The name of the toolbox to retrieve. </param>
         /// <param name="cancellationToken"> The cancellation token that can be used to cancel the operation. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
-        public virtual ClientResult<ToolboxRecord> GetToolbox(string toolboxName, CancellationToken cancellationToken = default)
+        public virtual ClientResult<ToolboxRecord> GetToolbox(string name, CancellationToken cancellationToken = default)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
 
-            ClientResult result = GetToolbox(toolboxName, cancellationToken.ToRequestOptions());
+            ClientResult result = GetToolbox(name, cancellationToken.ToRequestOptions());
             return ClientResult.FromValue((ToolboxRecord)result, result.GetRawResponse());
         }
 
-        /// <summary> Retrieve a toolbox. </summary>
-        /// <param name="toolboxName"> The name of the toolbox to retrieve. </param>
+        /// <summary> Retrieves the specified toolbox and its current configuration. </summary>
+        /// <param name="name"> The name of the toolbox to retrieve. </param>
         /// <param name="cancellationToken"> The cancellation token that can be used to cancel the operation. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
-        public virtual async Task<ClientResult<ToolboxRecord>> GetToolboxAsync(string toolboxName, CancellationToken cancellationToken = default)
+        public virtual async Task<ClientResult<ToolboxRecord>> GetToolboxAsync(string name, CancellationToken cancellationToken = default)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
 
-            ClientResult result = await GetToolboxAsync(toolboxName, cancellationToken.ToRequestOptions()).ConfigureAwait(false);
+            ClientResult result = await GetToolboxAsync(name, cancellationToken.ToRequestOptions()).ConfigureAwait(false);
             return ClientResult.FromValue((ToolboxRecord)result, result.GetRawResponse());
         }
 
         /// <summary>
-        /// [Protocol Method] List all toolboxes.
+        /// [Protocol Method] Returns the toolboxes available in the current project.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
@@ -238,7 +252,7 @@ namespace Azure.AI.Projects.Agents
         }
 
         /// <summary>
-        /// [Protocol Method] List all toolboxes.
+        /// [Protocol Method] Returns the toolboxes available in the current project.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
@@ -278,14 +292,14 @@ namespace Azure.AI.Projects.Agents
         }
 
         /// <summary>
-        /// [Protocol Method] List all versions of a toolbox.
+        /// [Protocol Method] Returns the available versions for the specified toolbox.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox to list versions for. </param>
+        /// <param name="name"> The name of the toolbox to list versions for. </param>
         /// <param name="limit">
         /// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the
         /// default is 20.
@@ -305,17 +319,17 @@ namespace Azure.AI.Projects.Agents
         /// subsequent call can include before=obj_foo in order to fetch the previous page of the list.
         /// </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual CollectionResult GetToolboxVersions(string toolboxName, int? limit, string order, string after, string before, RequestOptions options)
+        public virtual CollectionResult GetToolboxVersions(string name, int? limit, string order, string after, string before, RequestOptions options)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
 
             return new AgentToolboxesGetToolboxVersionsCollectionResult(
                 this,
-                toolboxName,
+                name,
                 limit,
                 order,
                 after,
@@ -324,14 +338,14 @@ namespace Azure.AI.Projects.Agents
         }
 
         /// <summary>
-        /// [Protocol Method] List all versions of a toolbox.
+        /// [Protocol Method] Returns the available versions for the specified toolbox.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox to list versions for. </param>
+        /// <param name="name"> The name of the toolbox to list versions for. </param>
         /// <param name="limit">
         /// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the
         /// default is 20.
@@ -351,17 +365,17 @@ namespace Azure.AI.Projects.Agents
         /// subsequent call can include before=obj_foo in order to fetch the previous page of the list.
         /// </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual AsyncCollectionResult GetToolboxVersionsAsync(string toolboxName, int? limit, string order, string after, string before, RequestOptions options)
+        public virtual AsyncCollectionResult GetToolboxVersionsAsync(string name, int? limit, string order, string after, string before, RequestOptions options)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
 
             return new AgentToolboxesGetToolboxVersionsAsyncCollectionResult(
                 this,
-                toolboxName,
+                name,
                 limit,
                 order,
                 after,
@@ -369,318 +383,280 @@ namespace Azure.AI.Projects.Agents
                 options);
         }
 
-        /// <summary> List all versions of a toolbox. </summary>
-        /// <param name="toolboxName"> The name of the toolbox to list versions for. </param>
-        /// <param name="limit">
-        /// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the
-        /// default is 20.
-        /// </param>
-        /// <param name="order">
-        /// Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and`desc`
-        /// for descending order.
-        /// </param>
-        /// <param name="after">
-        /// A cursor for use in pagination. `after` is an object ID that defines your place in the list.
-        /// For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-        /// subsequent call can include after=obj_foo in order to fetch the next page of the list.
-        /// </param>
-        /// <param name="before">
-        /// A cursor for use in pagination. `before` is an object ID that defines your place in the list.
-        /// For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-        /// subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-        /// </param>
-        /// <param name="cancellationToken"> The cancellation token that can be used to cancel the operation. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
-        /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
-        public virtual CollectionResult<ToolboxVersion> GetToolboxVersions(string toolboxName, int? limit = default, AgentListOrder? order = default, string after = default, string before = default, CancellationToken cancellationToken = default)
-        {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
-
-            return new AgentToolboxesGetToolboxVersionsCollectionResultOfT(
-                this,
-                toolboxName,
-                limit,
-                order?.ToString(),
-                after,
-                before,
-                cancellationToken.ToRequestOptions());
-        }
-
         /// <summary>
-        /// [Protocol Method] Retrieve a specific version of a toolbox.
+        /// [Protocol Method] Retrieves the specified version of a toolbox by name and version identifier.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox. </param>
+        /// <param name="name"> The name of the toolbox. </param>
         /// <param name="version"> The version identifier to retrieve. </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="version"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="version"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual ClientResult GetToolboxVersion(string toolboxName, string version, RequestOptions options)
+        public virtual ClientResult GetToolboxVersion(string name, string version, RequestOptions options)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNullOrEmpty(version, nameof(version));
 
-            using PipelineMessage message = CreateGetToolboxVersionRequest(toolboxName, version, options);
+            using PipelineMessage message = CreateGetToolboxVersionRequest(name, version, options);
             return ClientResult.FromResponse(Pipeline.ProcessMessage(message, options));
         }
 
         /// <summary>
-        /// [Protocol Method] Retrieve a specific version of a toolbox.
+        /// [Protocol Method] Retrieves the specified version of a toolbox by name and version identifier.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox. </param>
+        /// <param name="name"> The name of the toolbox. </param>
         /// <param name="version"> The version identifier to retrieve. </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="version"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="version"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual async Task<ClientResult> GetToolboxVersionAsync(string toolboxName, string version, RequestOptions options)
+        public virtual async Task<ClientResult> GetToolboxVersionAsync(string name, string version, RequestOptions options)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNullOrEmpty(version, nameof(version));
 
-            using PipelineMessage message = CreateGetToolboxVersionRequest(toolboxName, version, options);
+            using PipelineMessage message = CreateGetToolboxVersionRequest(name, version, options);
             return ClientResult.FromResponse(await Pipeline.ProcessMessageAsync(message, options).ConfigureAwait(false));
         }
 
-        /// <summary> Retrieve a specific version of a toolbox. </summary>
-        /// <param name="toolboxName"> The name of the toolbox. </param>
+        /// <summary> Retrieves the specified version of a toolbox by name and version identifier. </summary>
+        /// <param name="name"> The name of the toolbox. </param>
         /// <param name="version"> The version identifier to retrieve. </param>
         /// <param name="cancellationToken"> The cancellation token that can be used to cancel the operation. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="version"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="version"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
-        public virtual ClientResult<ToolboxVersion> GetToolboxVersion(string toolboxName, string version, CancellationToken cancellationToken = default)
+        public virtual ClientResult<ToolboxVersion> GetToolboxVersion(string name, string version, CancellationToken cancellationToken = default)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNullOrEmpty(version, nameof(version));
 
-            ClientResult result = GetToolboxVersion(toolboxName, version, cancellationToken.ToRequestOptions());
+            ClientResult result = GetToolboxVersion(name, version, cancellationToken.ToRequestOptions());
             return ClientResult.FromValue((ToolboxVersion)result, result.GetRawResponse());
         }
 
-        /// <summary> Retrieve a specific version of a toolbox. </summary>
-        /// <param name="toolboxName"> The name of the toolbox. </param>
+        /// <summary> Retrieves the specified version of a toolbox by name and version identifier. </summary>
+        /// <param name="name"> The name of the toolbox. </param>
         /// <param name="version"> The version identifier to retrieve. </param>
         /// <param name="cancellationToken"> The cancellation token that can be used to cancel the operation. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="version"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="version"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
-        public virtual async Task<ClientResult<ToolboxVersion>> GetToolboxVersionAsync(string toolboxName, string version, CancellationToken cancellationToken = default)
+        public virtual async Task<ClientResult<ToolboxVersion>> GetToolboxVersionAsync(string name, string version, CancellationToken cancellationToken = default)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNullOrEmpty(version, nameof(version));
 
-            ClientResult result = await GetToolboxVersionAsync(toolboxName, version, cancellationToken.ToRequestOptions()).ConfigureAwait(false);
+            ClientResult result = await GetToolboxVersionAsync(name, version, cancellationToken.ToRequestOptions()).ConfigureAwait(false);
             return ClientResult.FromValue((ToolboxVersion)result, result.GetRawResponse());
         }
 
         /// <summary>
-        /// [Protocol Method] Update a toolbox to point to a specific version.
+        /// [Protocol Method] Updates the toolbox's default version pointer to the specified version.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox to update. </param>
+        /// <param name="name"> The name of the toolbox to update. </param>
         /// <param name="content"> The content to send as the body of the request. </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="content"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="content"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual ClientResult UpdateToolbox(string toolboxName, BinaryContent content, RequestOptions options = null)
+        public virtual ClientResult UpdateToolbox(string name, BinaryContent content, RequestOptions options = null)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNull(content, nameof(content));
 
-            using PipelineMessage message = CreateUpdateToolboxRequest(toolboxName, content, options);
+            using PipelineMessage message = CreateUpdateToolboxRequest(name, content, options);
             return ClientResult.FromResponse(Pipeline.ProcessMessage(message, options));
         }
 
         /// <summary>
-        /// [Protocol Method] Update a toolbox to point to a specific version.
+        /// [Protocol Method] Updates the toolbox's default version pointer to the specified version.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox to update. </param>
+        /// <param name="name"> The name of the toolbox to update. </param>
         /// <param name="content"> The content to send as the body of the request. </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="content"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="content"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual async Task<ClientResult> UpdateToolboxAsync(string toolboxName, BinaryContent content, RequestOptions options = null)
+        public virtual async Task<ClientResult> UpdateToolboxAsync(string name, BinaryContent content, RequestOptions options = null)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNull(content, nameof(content));
 
-            using PipelineMessage message = CreateUpdateToolboxRequest(toolboxName, content, options);
+            using PipelineMessage message = CreateUpdateToolboxRequest(name, content, options);
             return ClientResult.FromResponse(await Pipeline.ProcessMessageAsync(message, options).ConfigureAwait(false));
         }
 
         /// <summary>
-        /// [Protocol Method] Delete a toolbox and all its versions.
+        /// [Protocol Method] Removes the specified toolbox along with all of its versions.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox to delete. </param>
+        /// <param name="name"> The name of the toolbox to delete. </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual ClientResult DeleteToolbox(string toolboxName, RequestOptions options)
+        public virtual ClientResult DeleteToolbox(string name, RequestOptions options)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
 
-            using PipelineMessage message = CreateDeleteToolboxRequest(toolboxName, options);
+            using PipelineMessage message = CreateDeleteToolboxRequest(name, options);
             return ClientResult.FromResponse(Pipeline.ProcessMessage(message, options));
         }
 
         /// <summary>
-        /// [Protocol Method] Delete a toolbox and all its versions.
+        /// [Protocol Method] Removes the specified toolbox along with all of its versions.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox to delete. </param>
+        /// <param name="name"> The name of the toolbox to delete. </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual async Task<ClientResult> DeleteToolboxAsync(string toolboxName, RequestOptions options)
+        public virtual async Task<ClientResult> DeleteToolboxAsync(string name, RequestOptions options)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
 
-            using PipelineMessage message = CreateDeleteToolboxRequest(toolboxName, options);
+            using PipelineMessage message = CreateDeleteToolboxRequest(name, options);
             return ClientResult.FromResponse(await Pipeline.ProcessMessageAsync(message, options).ConfigureAwait(false));
         }
 
-        /// <summary> Delete a toolbox and all its versions. </summary>
-        /// <param name="toolboxName"> The name of the toolbox to delete. </param>
+        /// <summary> Removes the specified toolbox along with all of its versions. </summary>
+        /// <param name="name"> The name of the toolbox to delete. </param>
         /// <param name="cancellationToken"> The cancellation token that can be used to cancel the operation. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
-        public virtual ClientResult DeleteToolbox(string toolboxName, CancellationToken cancellationToken = default)
+        public virtual ClientResult DeleteToolbox(string name, CancellationToken cancellationToken = default)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
 
-            return DeleteToolbox(toolboxName, cancellationToken.ToRequestOptions());
+            return DeleteToolbox(name, cancellationToken.ToRequestOptions());
         }
 
-        /// <summary> Delete a toolbox and all its versions. </summary>
-        /// <param name="toolboxName"> The name of the toolbox to delete. </param>
+        /// <summary> Removes the specified toolbox along with all of its versions. </summary>
+        /// <param name="name"> The name of the toolbox to delete. </param>
         /// <param name="cancellationToken"> The cancellation token that can be used to cancel the operation. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
-        public virtual async Task<ClientResult> DeleteToolboxAsync(string toolboxName, CancellationToken cancellationToken = default)
+        public virtual async Task<ClientResult> DeleteToolboxAsync(string name, CancellationToken cancellationToken = default)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
 
-            return await DeleteToolboxAsync(toolboxName, cancellationToken.ToRequestOptions()).ConfigureAwait(false);
+            return await DeleteToolboxAsync(name, cancellationToken.ToRequestOptions()).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// [Protocol Method] Delete a specific version of a toolbox.
+        /// [Protocol Method] Removes the specified version of a toolbox.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox. </param>
+        /// <param name="name"> The name of the toolbox. </param>
         /// <param name="version"> The version identifier to delete. </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="version"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="version"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual ClientResult DeleteToolboxVersion(string toolboxName, string version, RequestOptions options)
+        public virtual ClientResult DeleteToolboxVersion(string name, string version, RequestOptions options)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNullOrEmpty(version, nameof(version));
 
-            using PipelineMessage message = CreateDeleteToolboxVersionRequest(toolboxName, version, options);
+            using PipelineMessage message = CreateDeleteToolboxVersionRequest(name, version, options);
             return ClientResult.FromResponse(Pipeline.ProcessMessage(message, options));
         }
 
         /// <summary>
-        /// [Protocol Method] Delete a specific version of a toolbox.
+        /// [Protocol Method] Removes the specified version of a toolbox.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="toolboxName"> The name of the toolbox. </param>
+        /// <param name="name"> The name of the toolbox. </param>
         /// <param name="version"> The version identifier to delete. </param>
         /// <param name="options"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="version"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="version"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        public virtual async Task<ClientResult> DeleteToolboxVersionAsync(string toolboxName, string version, RequestOptions options)
+        public virtual async Task<ClientResult> DeleteToolboxVersionAsync(string name, string version, RequestOptions options)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNullOrEmpty(version, nameof(version));
 
-            using PipelineMessage message = CreateDeleteToolboxVersionRequest(toolboxName, version, options);
+            using PipelineMessage message = CreateDeleteToolboxVersionRequest(name, version, options);
             return ClientResult.FromResponse(await Pipeline.ProcessMessageAsync(message, options).ConfigureAwait(false));
         }
 
-        /// <summary> Delete a specific version of a toolbox. </summary>
-        /// <param name="toolboxName"> The name of the toolbox. </param>
+        /// <summary> Removes the specified version of a toolbox. </summary>
+        /// <param name="name"> The name of the toolbox. </param>
         /// <param name="version"> The version identifier to delete. </param>
         /// <param name="cancellationToken"> The cancellation token that can be used to cancel the operation. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="version"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="version"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
-        public virtual ClientResult DeleteToolboxVersion(string toolboxName, string version, CancellationToken cancellationToken = default)
+        public virtual ClientResult DeleteToolboxVersion(string name, string version, CancellationToken cancellationToken = default)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNullOrEmpty(version, nameof(version));
 
-            return DeleteToolboxVersion(toolboxName, version, cancellationToken.ToRequestOptions());
+            return DeleteToolboxVersion(name, version, cancellationToken.ToRequestOptions());
         }
 
-        /// <summary> Delete a specific version of a toolbox. </summary>
-        /// <param name="toolboxName"> The name of the toolbox. </param>
+        /// <summary> Removes the specified version of a toolbox. </summary>
+        /// <param name="name"> The name of the toolbox. </param>
         /// <param name="version"> The version identifier to delete. </param>
         /// <param name="cancellationToken"> The cancellation token that can be used to cancel the operation. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="toolboxName"/> or <paramref name="version"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="toolboxName"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="version"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="name"/> or <paramref name="version"/> is an empty string, and was expected to be non-empty. </exception>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
-        public virtual async Task<ClientResult> DeleteToolboxVersionAsync(string toolboxName, string version, CancellationToken cancellationToken = default)
+        public virtual async Task<ClientResult> DeleteToolboxVersionAsync(string name, string version, CancellationToken cancellationToken = default)
         {
-            Argument.AssertNotNullOrEmpty(toolboxName, nameof(toolboxName));
+            Argument.AssertNotNullOrEmpty(name, nameof(name));
             Argument.AssertNotNullOrEmpty(version, nameof(version));
 
-            return await DeleteToolboxVersionAsync(toolboxName, version, cancellationToken.ToRequestOptions()).ConfigureAwait(false);
+            return await DeleteToolboxVersionAsync(name, version, cancellationToken.ToRequestOptions()).ConfigureAwait(false);
         }
     }
 }

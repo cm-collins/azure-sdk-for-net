@@ -32,7 +32,7 @@ namespace Azure.AI.Extensions.OpenAI
         public ClientPipeline Pipeline { get; }
 
         /// <summary>
-        /// [Protocol Method] Produces a compaction of a responses conversation.
+        /// [Protocol Method] Compacts a conversation into a response object suitable for long-running and zero-data-retention scenarios.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
@@ -50,7 +50,7 @@ namespace Azure.AI.Extensions.OpenAI
         }
 
         /// <summary>
-        /// [Protocol Method] Produces a compaction of a responses conversation.
+        /// [Protocol Method] Compacts a conversation into a response object suitable for long-running and zero-data-retention scenarios.
         /// <list type="bullet">
         /// <item>
         /// <description> This <see href="https://aka.ms/azsdk/net/protocol-methods">protocol method</see> allows explicit creation of the request and processing of the response for advanced scenarios. </description>
@@ -67,30 +67,44 @@ namespace Azure.AI.Extensions.OpenAI
             return ClientResult.FromResponse(await Pipeline.ProcessMessageAsync(message, options).ConfigureAwait(false));
         }
 
-        /// <summary> Produces a compaction of a responses conversation. </summary>
+        /// <summary> Compacts a conversation into a response object suitable for long-running and zero-data-retention scenarios. </summary>
         /// <param name="model"></param>
         /// <param name="input"></param>
         /// <param name="previousResponseId"></param>
         /// <param name="instructions"></param>
+        /// <param name="promptCacheKey"></param>
         /// <param name="cancellationToken"> The cancellation token that can be used to cancel the operation. </param>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
-        public virtual ClientResult<CompactResource> CompactResponseConversation(ModelIdsCompaction? model, BinaryData input = default, string previousResponseId = default, string instructions = default, CancellationToken cancellationToken = default)
+        public virtual ClientResult<CompactResource> CompactResponseConversation(ModelIdsCompaction? model, BinaryData input = default, string previousResponseId = default, string instructions = default, string promptCacheKey = default, CancellationToken cancellationToken = default)
         {
-            CompactResponseMethodPublicBody spreadModel = new CompactResponseMethodPublicBody(model, input, previousResponseId, instructions, default);
+            CompactResponseMethodPublicBody spreadModel = new CompactResponseMethodPublicBody(
+                model,
+                input,
+                previousResponseId,
+                instructions,
+                promptCacheKey,
+                default);
             ClientResult result = CompactResponseConversation(spreadModel, cancellationToken.ToRequestOptions());
             return ClientResult.FromValue((CompactResource)result, result.GetRawResponse());
         }
 
-        /// <summary> Produces a compaction of a responses conversation. </summary>
+        /// <summary> Compacts a conversation into a response object suitable for long-running and zero-data-retention scenarios. </summary>
         /// <param name="model"></param>
         /// <param name="input"></param>
         /// <param name="previousResponseId"></param>
         /// <param name="instructions"></param>
+        /// <param name="promptCacheKey"></param>
         /// <param name="cancellationToken"> The cancellation token that can be used to cancel the operation. </param>
         /// <exception cref="ClientResultException"> Service returned a non-success status code. </exception>
-        public virtual async Task<ClientResult<CompactResource>> CompactResponseConversationAsync(ModelIdsCompaction? model, BinaryData input = default, string previousResponseId = default, string instructions = default, CancellationToken cancellationToken = default)
+        public virtual async Task<ClientResult<CompactResource>> CompactResponseConversationAsync(ModelIdsCompaction? model, BinaryData input = default, string previousResponseId = default, string instructions = default, string promptCacheKey = default, CancellationToken cancellationToken = default)
         {
-            CompactResponseMethodPublicBody spreadModel = new CompactResponseMethodPublicBody(model, input, previousResponseId, instructions, default);
+            CompactResponseMethodPublicBody spreadModel = new CompactResponseMethodPublicBody(
+                model,
+                input,
+                previousResponseId,
+                instructions,
+                promptCacheKey,
+                default);
             ClientResult result = await CompactResponseConversationAsync(spreadModel, cancellationToken.ToRequestOptions()).ConfigureAwait(false);
             return ClientResult.FromValue((CompactResource)result, result.GetRawResponse());
         }
