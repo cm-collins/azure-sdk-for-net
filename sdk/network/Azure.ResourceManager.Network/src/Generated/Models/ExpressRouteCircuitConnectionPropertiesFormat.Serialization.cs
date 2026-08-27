@@ -94,10 +94,10 @@ namespace Azure.ResourceManager.Network.Models
                 writer.WritePropertyName("authorizationKey"u8);
                 writer.WriteStringValue(AuthorizationKey);
             }
-            if (Optional.IsDefined(Ipv6CircuitConnectionConfig))
+            if (Optional.IsDefined(IPv6CircuitConnectionConfig))
             {
                 writer.WritePropertyName("ipv6CircuitConnectionConfig"u8);
-                writer.WriteObjectValue(Ipv6CircuitConnectionConfig, options);
+                writer.WriteObjectValue(IPv6CircuitConnectionConfig, options);
             }
             if (options.Format != "W" && Optional.IsDefined(CircuitConnectionStatus))
             {

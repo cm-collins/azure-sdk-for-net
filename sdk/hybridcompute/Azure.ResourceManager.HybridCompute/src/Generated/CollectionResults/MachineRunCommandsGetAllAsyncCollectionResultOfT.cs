@@ -18,7 +18,7 @@ namespace Azure.ResourceManager.HybridCompute
     internal partial class MachineRunCommandsGetAllAsyncCollectionResultOfT : AsyncPageable<HybridComputeMachineRunCommandData>
     {
         private readonly MachineRunCommands _client;
-        private readonly string _subscriptionId;
+        private readonly Guid _subscriptionId;
         private readonly string _resourceGroupName;
         private readonly string _machineName;
         private readonly string _expand;
@@ -33,7 +33,7 @@ namespace Azure.ResourceManager.HybridCompute
         /// <param name="expand"> The expand expression to apply on the operation. </param>
         /// <param name="context"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
         /// <param name="diagnosticScope"> The diagnostic scope name. </param>
-        public MachineRunCommandsGetAllAsyncCollectionResultOfT(MachineRunCommands client, string subscriptionId, string resourceGroupName, string machineName, string expand, RequestContext context, string diagnosticScope) : base(context?.CancellationToken ?? default)
+        public MachineRunCommandsGetAllAsyncCollectionResultOfT(MachineRunCommands client, Guid subscriptionId, string resourceGroupName, string machineName, string expand, RequestContext context, string diagnosticScope) : base(context?.CancellationToken ?? default)
         {
             _client = client;
             _subscriptionId = subscriptionId;
@@ -59,8 +59,8 @@ namespace Azure.ResourceManager.HybridCompute
                     yield break;
                 }
                 MachineRunCommandsListResult result = MachineRunCommandsListResult.FromResponse(response);
-                yield return Page<HybridComputeMachineRunCommandData>.FromValues((IReadOnlyList<HybridComputeMachineRunCommandData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
                 nextPage = result.NextLink;
+                yield return Page<HybridComputeMachineRunCommandData>.FromValues((IReadOnlyList<HybridComputeMachineRunCommandData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
                 if (nextPage == null)
                 {
                     yield break;

@@ -84,10 +84,10 @@ namespace Azure.ResourceManager.Network.Models
                 writer.WritePropertyName("publicIPAddressVersion"u8);
                 writer.WriteStringValue(PublicIPAddressVersion.Value.ToString());
             }
-            if (options.Format != "W" && Optional.IsDefined(IpConfiguration))
+            if (options.Format != "W" && Optional.IsDefined(IPConfiguration))
             {
                 writer.WritePropertyName("ipConfiguration"u8);
-                writer.WriteObjectValue(IpConfiguration, options);
+                writer.WriteObjectValue(IPConfiguration, options);
             }
             if (Optional.IsDefined(DnsSettings))
             {
@@ -99,20 +99,20 @@ namespace Azure.ResourceManager.Network.Models
                 writer.WritePropertyName("ddosSettings"u8);
                 writer.WriteObjectValue(DdosSettings, options);
             }
-            if (Optional.IsCollectionDefined(IpTags))
+            if (Optional.IsCollectionDefined(IPTags))
             {
                 writer.WritePropertyName("ipTags"u8);
                 writer.WriteStartArray();
-                foreach (IPTag item in IpTags)
+                foreach (IPTag item in IPTags)
                 {
                     writer.WriteObjectValue(item, options);
                 }
                 writer.WriteEndArray();
             }
-            if (Optional.IsDefined(IpAddress))
+            if (Optional.IsDefined(IPAddress))
             {
                 writer.WritePropertyName("ipAddress"u8);
-                writer.WriteStringValue(IpAddress);
+                writer.WriteStringValue(IPAddress);
             }
             if (Optional.IsDefined(PublicIPPrefix))
             {
@@ -158,6 +158,11 @@ namespace Azure.ResourceManager.Network.Models
             {
                 writer.WritePropertyName("deleteOption"u8);
                 writer.WriteStringValue(DeleteOption.Value.ToString());
+            }
+            if (options.Format != "W" && Optional.IsDefined(IsUpgradedToV2))
+            {
+                writer.WritePropertyName("upgradedToV2"u8);
+                writer.WriteBooleanValue(IsUpgradedToV2.Value);
             }
             if (options.Format != "W" && _additionalBinaryDataProperties != null)
             {
@@ -217,6 +222,7 @@ namespace Azure.ResourceManager.Network.Models
             PublicIPAddressMigrationPhase? migrationPhase = default;
             PublicIPAddressData linkedPublicIPAddress = default;
             IPAddressDeleteOption? deleteOption = default;
+            bool? isUpgradedToV2 = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             foreach (var prop in element.EnumerateObject())
             {
@@ -365,6 +371,15 @@ namespace Azure.ResourceManager.Network.Models
                     deleteOption = new IPAddressDeleteOption(prop.Value.GetString());
                     continue;
                 }
+                if (prop.NameEquals("upgradedToV2"u8))
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    isUpgradedToV2 = prop.Value.GetBoolean();
+                    continue;
+                }
                 if (options.Format != "W")
                 {
                     additionalBinaryDataProperties.Add(prop.Name, BinaryData.FromString(prop.Value.GetRawText()));
@@ -387,6 +402,7 @@ namespace Azure.ResourceManager.Network.Models
                 migrationPhase,
                 linkedPublicIPAddress,
                 deleteOption,
+                isUpgradedToV2,
                 additionalBinaryDataProperties);
         }
     }

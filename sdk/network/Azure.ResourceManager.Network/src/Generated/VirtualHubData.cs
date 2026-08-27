@@ -96,20 +96,6 @@ namespace Azure.ResourceManager.Network
             }
         }
 
-        /// <summary> List of all virtual hub route table v2s associated with this VirtualHub. </summary>
-        [WirePath("properties.virtualHubRouteTableV2s")]
-        public IList<VirtualHubRouteTableV2Data> VirtualHubRouteTableV2s
-        {
-            get
-            {
-                if (Properties is null)
-                {
-                    Properties = new VirtualHubProperties();
-                }
-                return Properties.VirtualHubRouteTableV2s;
-            }
-        }
-
         /// <summary> The sku of this VirtualHub. </summary>
         [WirePath("properties.sku")]
         public string Sku
@@ -138,20 +124,6 @@ namespace Azure.ResourceManager.Network
             }
         }
 
-        /// <summary> List of references to IpConfigurations. </summary>
-        [WirePath("properties.ipConfigurations")]
-        public IReadOnlyList<NetworkSubResource> IpConfigurations
-        {
-            get
-            {
-                if (Properties is null)
-                {
-                    Properties = new VirtualHubProperties();
-                }
-                return Properties.IpConfigurations;
-            }
-        }
-
         /// <summary> VirtualRouter ASN. </summary>
         [WirePath("properties.virtualRouterAsn")]
         public long? VirtualRouterAsn
@@ -170,9 +142,27 @@ namespace Azure.ResourceManager.Network
             }
         }
 
-        /// <summary> VirtualRouter IPs. </summary>
-        [WirePath("properties.virtualRouterIps")]
-        public IList<string> VirtualRouterIps
+        /// <summary> IPv6 Address-prefix for this VirtualHub. </summary>
+        [WirePath("properties.addressPrefixV6")]
+        public string AddressPrefixV6
+        {
+            get
+            {
+                return Properties is null ? default : Properties.AddressPrefixV6;
+            }
+            set
+            {
+                if (Properties is null)
+                {
+                    Properties = new VirtualHubProperties();
+                }
+                Properties.AddressPrefixV6 = value;
+            }
+        }
+
+        /// <summary> VirtualRouter IPv6 IPs. </summary>
+        [WirePath("properties.virtualRouterIpsV6")]
+        public IList<string> VirtualRouterIpsV6
         {
             get
             {
@@ -180,7 +170,7 @@ namespace Azure.ResourceManager.Network
                 {
                     Properties = new VirtualHubProperties();
                 }
-                return Properties.VirtualRouterIps;
+                return Properties.VirtualRouterIpsV6;
             }
         }
 

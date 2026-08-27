@@ -40,7 +40,7 @@ namespace Azure.ResourceManager.HybridNetwork
         {
             TryGetApiVersion(NetworkFunctionDefinitionGroupResource.ResourceType, out string networkFunctionDefinitionGroupApiVersion);
             _networkFunctionDefinitionGroupsClientDiagnostics = new ClientDiagnostics("Azure.ResourceManager.HybridNetwork", NetworkFunctionDefinitionGroupResource.ResourceType.Namespace, Diagnostics);
-            _networkFunctionDefinitionGroupsRestClient = new NetworkFunctionDefinitionGroups(_networkFunctionDefinitionGroupsClientDiagnostics, Pipeline, Endpoint, networkFunctionDefinitionGroupApiVersion ?? "2025-03-30");
+            _networkFunctionDefinitionGroupsRestClient = new NetworkFunctionDefinitionGroups(_networkFunctionDefinitionGroupsClientDiagnostics, Pipeline, Diagnostics.ApplicationId, Endpoint, networkFunctionDefinitionGroupApiVersion ?? "2025-03-30");
             ValidateResourceId(id);
         }
 
@@ -93,7 +93,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _networkFunctionDefinitionGroupsRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, networkFunctionDefinitionGroupName, NetworkFunctionDefinitionGroupData.ToRequestContent(data), context);
                 Response response = await Pipeline.ProcessMessageAsync(message, context).ConfigureAwait(false);
                 HybridNetworkArmOperation<NetworkFunctionDefinitionGroupResource> operation = new HybridNetworkArmOperation<NetworkFunctionDefinitionGroupResource>(
-                    new NetworkFunctionDefinitionGroupOperationSource(Client),
+                    new NetworkFunctionDefinitionGroupResourceOperationSource(Client),
                     _networkFunctionDefinitionGroupsClientDiagnostics,
                     Pipeline,
                     message.Request,
@@ -151,7 +151,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _networkFunctionDefinitionGroupsRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, networkFunctionDefinitionGroupName, NetworkFunctionDefinitionGroupData.ToRequestContent(data), context);
                 Response response = Pipeline.ProcessMessage(message, context);
                 HybridNetworkArmOperation<NetworkFunctionDefinitionGroupResource> operation = new HybridNetworkArmOperation<NetworkFunctionDefinitionGroupResource>(
-                    new NetworkFunctionDefinitionGroupOperationSource(Client),
+                    new NetworkFunctionDefinitionGroupResourceOperationSource(Client),
                     _networkFunctionDefinitionGroupsClientDiagnostics,
                     Pipeline,
                     message.Request,

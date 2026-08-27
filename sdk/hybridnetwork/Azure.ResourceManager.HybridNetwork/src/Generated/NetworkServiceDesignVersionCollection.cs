@@ -40,7 +40,7 @@ namespace Azure.ResourceManager.HybridNetwork
         {
             TryGetApiVersion(NetworkServiceDesignVersionResource.ResourceType, out string networkServiceDesignVersionApiVersion);
             _networkServiceDesignVersionsClientDiagnostics = new ClientDiagnostics("Azure.ResourceManager.HybridNetwork", NetworkServiceDesignVersionResource.ResourceType.Namespace, Diagnostics);
-            _networkServiceDesignVersionsRestClient = new NetworkServiceDesignVersions(_networkServiceDesignVersionsClientDiagnostics, Pipeline, Endpoint, networkServiceDesignVersionApiVersion ?? "2025-03-30");
+            _networkServiceDesignVersionsRestClient = new NetworkServiceDesignVersions(_networkServiceDesignVersionsClientDiagnostics, Pipeline, Diagnostics.ApplicationId, Endpoint, networkServiceDesignVersionApiVersion ?? "2025-03-30");
             ValidateResourceId(id);
         }
 
@@ -93,7 +93,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _networkServiceDesignVersionsRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, networkServiceDesignVersionName, NetworkServiceDesignVersionData.ToRequestContent(data), context);
                 Response response = await Pipeline.ProcessMessageAsync(message, context).ConfigureAwait(false);
                 HybridNetworkArmOperation<NetworkServiceDesignVersionResource> operation = new HybridNetworkArmOperation<NetworkServiceDesignVersionResource>(
-                    new NetworkServiceDesignVersionOperationSource(Client),
+                    new NetworkServiceDesignVersionResourceOperationSource(Client),
                     _networkServiceDesignVersionsClientDiagnostics,
                     Pipeline,
                     message.Request,
@@ -151,7 +151,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _networkServiceDesignVersionsRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, networkServiceDesignVersionName, NetworkServiceDesignVersionData.ToRequestContent(data), context);
                 Response response = Pipeline.ProcessMessage(message, context);
                 HybridNetworkArmOperation<NetworkServiceDesignVersionResource> operation = new HybridNetworkArmOperation<NetworkServiceDesignVersionResource>(
-                    new NetworkServiceDesignVersionOperationSource(Client),
+                    new NetworkServiceDesignVersionResourceOperationSource(Client),
                     _networkServiceDesignVersionsClientDiagnostics,
                     Pipeline,
                     message.Request,

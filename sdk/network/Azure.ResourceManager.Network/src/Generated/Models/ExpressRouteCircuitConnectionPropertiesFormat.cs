@@ -38,7 +38,7 @@ namespace Azure.ResourceManager.Network.Models
             PeerExpressRouteCircuitPeering = peerExpressRouteCircuitPeering;
             AddressPrefix = addressPrefix;
             AuthorizationKey = authorizationKey;
-            Ipv6CircuitConnectionConfig = ipv6CircuitConnectionConfig;
+            IPv6CircuitConnectionConfig = ipv6CircuitConnectionConfig;
             CircuitConnectionStatus = circuitConnectionStatus;
             ProvisioningState = provisioningState;
             _additionalBinaryDataProperties = additionalBinaryDataProperties;
@@ -62,7 +62,7 @@ namespace Azure.ResourceManager.Network.Models
 
         /// <summary> IPv6 Address PrefixProperties of the express route circuit connection. </summary>
         [WirePath("ipv6CircuitConnectionConfig")]
-        public IPv6CircuitConnectionConfig Ipv6CircuitConnectionConfig { get; set; }
+        public IPv6CircuitConnectionConfig IPv6CircuitConnectionConfig { get; set; }
 
         /// <summary> Express Route Circuit connection state. </summary>
         [WirePath("circuitConnectionStatus")]

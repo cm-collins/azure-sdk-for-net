@@ -17,7 +17,7 @@ namespace Azure.ResourceManager.HybridCompute
     internal partial class MachinesGetByResourceGroupCollectionResultOfT : Pageable<HybridComputeMachineData>
     {
         private readonly Machines _client;
-        private readonly string _subscriptionId;
+        private readonly Guid _subscriptionId;
         private readonly string _resourceGroupName;
         private readonly string _expand;
         private readonly RequestContext _context;
@@ -30,7 +30,7 @@ namespace Azure.ResourceManager.HybridCompute
         /// <param name="expand"> Expands referenced resources. </param>
         /// <param name="context"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
         /// <param name="diagnosticScope"> The diagnostic scope name. </param>
-        public MachinesGetByResourceGroupCollectionResultOfT(Machines client, string subscriptionId, string resourceGroupName, string expand, RequestContext context, string diagnosticScope) : base(context?.CancellationToken ?? default)
+        public MachinesGetByResourceGroupCollectionResultOfT(Machines client, Guid subscriptionId, string resourceGroupName, string expand, RequestContext context, string diagnosticScope) : base(context?.CancellationToken ?? default)
         {
             _client = client;
             _subscriptionId = subscriptionId;
@@ -55,8 +55,8 @@ namespace Azure.ResourceManager.HybridCompute
                     yield break;
                 }
                 MachineListResult result = MachineListResult.FromResponse(response);
-                yield return Page<HybridComputeMachineData>.FromValues((IReadOnlyList<HybridComputeMachineData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
                 nextPage = result.NextLink;
+                yield return Page<HybridComputeMachineData>.FromValues((IReadOnlyList<HybridComputeMachineData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
                 if (nextPage == null)
                 {
                     yield break;

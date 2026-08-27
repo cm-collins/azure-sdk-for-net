@@ -57,9 +57,9 @@ namespace Azure.ResourceManager.HorizonDB
                 {
                     yield break;
                 }
-                HorizonDbFirewallRuleListResult result = HorizonDbFirewallRuleListResult.FromResponse(response);
-                yield return Page<HorizonDBFirewallRuleData>.FromValues((IReadOnlyList<HorizonDBFirewallRuleData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
+                HorizonDBFirewallRuleListResult result = HorizonDBFirewallRuleListResult.FromResponse(response);
                 nextPage = result.NextLink;
+                yield return Page<HorizonDBFirewallRuleData>.FromValues((IReadOnlyList<HorizonDBFirewallRuleData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
                 if (nextPage == null)
                 {
                     yield break;

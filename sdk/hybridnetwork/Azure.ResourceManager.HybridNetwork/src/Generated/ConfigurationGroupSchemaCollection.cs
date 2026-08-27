@@ -40,7 +40,7 @@ namespace Azure.ResourceManager.HybridNetwork
         {
             TryGetApiVersion(ConfigurationGroupSchemaResource.ResourceType, out string configurationGroupSchemaApiVersion);
             _configurationGroupSchemasClientDiagnostics = new ClientDiagnostics("Azure.ResourceManager.HybridNetwork", ConfigurationGroupSchemaResource.ResourceType.Namespace, Diagnostics);
-            _configurationGroupSchemasRestClient = new ConfigurationGroupSchemas(_configurationGroupSchemasClientDiagnostics, Pipeline, Endpoint, configurationGroupSchemaApiVersion ?? "2025-03-30");
+            _configurationGroupSchemasRestClient = new ConfigurationGroupSchemas(_configurationGroupSchemasClientDiagnostics, Pipeline, Diagnostics.ApplicationId, Endpoint, configurationGroupSchemaApiVersion ?? "2025-03-30");
             ValidateResourceId(id);
         }
 
@@ -93,7 +93,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _configurationGroupSchemasRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, configurationGroupSchemaName, ConfigurationGroupSchemaData.ToRequestContent(data), context);
                 Response response = await Pipeline.ProcessMessageAsync(message, context).ConfigureAwait(false);
                 HybridNetworkArmOperation<ConfigurationGroupSchemaResource> operation = new HybridNetworkArmOperation<ConfigurationGroupSchemaResource>(
-                    new ConfigurationGroupSchemaOperationSource(Client),
+                    new ConfigurationGroupSchemaResourceOperationSource(Client),
                     _configurationGroupSchemasClientDiagnostics,
                     Pipeline,
                     message.Request,
@@ -151,7 +151,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _configurationGroupSchemasRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, configurationGroupSchemaName, ConfigurationGroupSchemaData.ToRequestContent(data), context);
                 Response response = Pipeline.ProcessMessage(message, context);
                 HybridNetworkArmOperation<ConfigurationGroupSchemaResource> operation = new HybridNetworkArmOperation<ConfigurationGroupSchemaResource>(
-                    new ConfigurationGroupSchemaOperationSource(Client),
+                    new ConfigurationGroupSchemaResourceOperationSource(Client),
                     _configurationGroupSchemasClientDiagnostics,
                     Pipeline,
                     message.Request,

@@ -40,7 +40,7 @@ namespace Azure.ResourceManager.HybridNetwork
         {
             TryGetApiVersion(ArtifactStoreResource.ResourceType, out string artifactStoreApiVersion);
             _artifactStoresClientDiagnostics = new ClientDiagnostics("Azure.ResourceManager.HybridNetwork", ArtifactStoreResource.ResourceType.Namespace, Diagnostics);
-            _artifactStoresRestClient = new ArtifactStores(_artifactStoresClientDiagnostics, Pipeline, Endpoint, artifactStoreApiVersion ?? "2025-03-30");
+            _artifactStoresRestClient = new ArtifactStores(_artifactStoresClientDiagnostics, Pipeline, Diagnostics.ApplicationId, Endpoint, artifactStoreApiVersion ?? "2025-03-30");
             ValidateResourceId(id);
         }
 
@@ -93,7 +93,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _artifactStoresRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, artifactStoreName, ArtifactStoreData.ToRequestContent(data), context);
                 Response response = await Pipeline.ProcessMessageAsync(message, context).ConfigureAwait(false);
                 HybridNetworkArmOperation<ArtifactStoreResource> operation = new HybridNetworkArmOperation<ArtifactStoreResource>(
-                    new ArtifactStoreOperationSource(Client),
+                    new ArtifactStoreResourceOperationSource(Client),
                     _artifactStoresClientDiagnostics,
                     Pipeline,
                     message.Request,
@@ -151,7 +151,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _artifactStoresRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, artifactStoreName, ArtifactStoreData.ToRequestContent(data), context);
                 Response response = Pipeline.ProcessMessage(message, context);
                 HybridNetworkArmOperation<ArtifactStoreResource> operation = new HybridNetworkArmOperation<ArtifactStoreResource>(
-                    new ArtifactStoreOperationSource(Client),
+                    new ArtifactStoreResourceOperationSource(Client),
                     _artifactStoresClientDiagnostics,
                     Pipeline,
                     message.Request,

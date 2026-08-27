@@ -18,7 +18,7 @@ namespace Azure.ResourceManager.HybridCompute
     internal partial class GatewaysGetBySubscriptionAsyncCollectionResultOfT : AsyncPageable<ArcGatewayData>
     {
         private readonly Gateways _client;
-        private readonly string _subscriptionId;
+        private readonly Guid _subscriptionId;
         private readonly RequestContext _context;
         private readonly string _diagnosticScope;
 
@@ -27,7 +27,7 @@ namespace Azure.ResourceManager.HybridCompute
         /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
         /// <param name="context"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
         /// <param name="diagnosticScope"> The diagnostic scope name. </param>
-        public GatewaysGetBySubscriptionAsyncCollectionResultOfT(Gateways client, string subscriptionId, RequestContext context, string diagnosticScope) : base(context?.CancellationToken ?? default)
+        public GatewaysGetBySubscriptionAsyncCollectionResultOfT(Gateways client, Guid subscriptionId, RequestContext context, string diagnosticScope) : base(context?.CancellationToken ?? default)
         {
             _client = client;
             _subscriptionId = subscriptionId;
@@ -50,8 +50,8 @@ namespace Azure.ResourceManager.HybridCompute
                     yield break;
                 }
                 GatewaysListResult result = GatewaysListResult.FromResponse(response);
-                yield return Page<ArcGatewayData>.FromValues((IReadOnlyList<ArcGatewayData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
                 nextPage = result.NextLink;
+                yield return Page<ArcGatewayData>.FromValues((IReadOnlyList<ArcGatewayData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
                 if (nextPage == null)
                 {
                     yield break;

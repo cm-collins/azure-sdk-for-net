@@ -54,9 +54,9 @@ namespace Azure.ResourceManager.Network
                 {
                     yield break;
                 }
-                ListVirtualHubIpConfigurationResults result = ListVirtualHubIpConfigurationResults.FromResponse(response);
-                yield return Page<HubIPConfigurationData>.FromValues((IReadOnlyList<HubIPConfigurationData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
+                ListVirtualHubIPConfigurationResults result = ListVirtualHubIPConfigurationResults.FromResponse(response);
                 nextPage = result.NextLink;
+                yield return Page<HubIPConfigurationData>.FromValues((IReadOnlyList<HubIPConfigurationData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
                 if (nextPage == null)
                 {
                     yield break;

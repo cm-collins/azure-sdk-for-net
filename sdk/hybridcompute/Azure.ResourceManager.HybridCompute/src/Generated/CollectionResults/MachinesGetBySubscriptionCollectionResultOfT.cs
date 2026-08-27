@@ -17,7 +17,7 @@ namespace Azure.ResourceManager.HybridCompute
     internal partial class MachinesGetBySubscriptionCollectionResultOfT : Pageable<HybridComputeMachineData>
     {
         private readonly Machines _client;
-        private readonly string _subscriptionId;
+        private readonly Guid _subscriptionId;
         private readonly RequestContext _context;
         private readonly string _diagnosticScope;
 
@@ -26,7 +26,7 @@ namespace Azure.ResourceManager.HybridCompute
         /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
         /// <param name="context"> The request options, which can override default behaviors of the client pipeline on a per-call basis. </param>
         /// <param name="diagnosticScope"> The diagnostic scope name. </param>
-        public MachinesGetBySubscriptionCollectionResultOfT(Machines client, string subscriptionId, RequestContext context, string diagnosticScope) : base(context?.CancellationToken ?? default)
+        public MachinesGetBySubscriptionCollectionResultOfT(Machines client, Guid subscriptionId, RequestContext context, string diagnosticScope) : base(context?.CancellationToken ?? default)
         {
             _client = client;
             _subscriptionId = subscriptionId;
@@ -49,8 +49,8 @@ namespace Azure.ResourceManager.HybridCompute
                     yield break;
                 }
                 MachineListResult result = MachineListResult.FromResponse(response);
-                yield return Page<HybridComputeMachineData>.FromValues((IReadOnlyList<HybridComputeMachineData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
                 nextPage = result.NextLink;
+                yield return Page<HybridComputeMachineData>.FromValues((IReadOnlyList<HybridComputeMachineData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
                 if (nextPage == null)
                 {
                     yield break;

@@ -76,12 +76,12 @@ public class ProjectOpenAIClientSmokeTest : ProjectsOpenAITestBase
         ProjectOpenAIClient openAIClientWithoutApp = new(
             projectEndpoint: new Uri(TestEnvironment.FOUNDRY_PROJECT_ENDPOINT),
             tokenProvider: new MockCredential(),
-            options: WithExtraPolicy(new ProjectResponsesClientOptions()));
+            options: WithExtraPolicy(new ProjectOpenAIClientOptions()));
 
         ProjectOpenAIClient openAIClientWithApp = new(
             projectEndpoint: new Uri(TestEnvironment.FOUNDRY_PROJECT_ENDPOINT),
             tokenProvider: new MockCredential(),
-            options: WithExtraPolicy(new ProjectResponsesClientOptions()
+            options: WithExtraPolicy(new ProjectOpenAIClientOptions()
             {
                 UserAgentApplicationId = "MyOtherApplication",
             }));
@@ -193,7 +193,8 @@ public class ProjectOpenAIClientSmokeTest : ProjectsOpenAITestBase
             oaiClient = GetTestProjectOpenAIClient().GetProjectResponsesClientForModel(TestEnvironment.FOUNDRY_MODEL_NAME);
         }
         BinaryData options = BinaryData.FromObjectAsJson(
-        new {
+        new
+        {
             model = TestEnvironment.FOUNDRY_MODEL_NAME,
             input = new[]
             {
@@ -210,7 +211,7 @@ public class ProjectOpenAIClientSmokeTest : ProjectsOpenAITestBase
         ClientResult result;
         using BinaryContent optionsContent = BinaryContent.Create(options);
         {
-            result = await oaiClient.CompactResponseAsync("application/json", optionsContent);
+            result = await oaiClient.CompactResponseAsync(optionsContent, "application/json");
         }
         List<object> items = ParseAndValidateCompactedResponse(result);
         items.Add(new
@@ -226,8 +227,9 @@ public class ProjectOpenAIClientSmokeTest : ProjectsOpenAITestBase
         });
         using BinaryContent newOptionsContent = BinaryContent.Create(options);
         {
-            result = await oaiClient.CompactResponseAsync("application/json", newOptionsContent);
+            result = await oaiClient.CompactResponseAsync(newOptionsContent, "application/json");
         }
+
         ParseAndValidateCompactedResponse(result);
     }
 
@@ -263,6 +265,51 @@ public class ProjectOpenAIClientSmokeTest : ProjectsOpenAITestBase
         Assert.That(expectedTypes, Is.Empty);
         Assert.That(items, Has.Count.GreaterThanOrEqualTo(3));
         return items;
+    }
+
+    [RecordedTest]
+    [TestCase(true, true)]
+    [TestCase(true, false)]
+    [TestCase(false, true)]
+    [TestCase(false, false)]
+    public async Task TestGetResponse(bool useProjects, bool storeResponse)
+    {
+        ProjectResponsesClient oaiClient;
+        if (useProjects)
+        {
+            AIProjectClient projectClient = GetTestProjectClient();
+            oaiClient = projectClient.GetProjectOpenAIClient().GetProjectResponsesClientForModel(TestEnvironment.FOUNDRY_MODEL_NAME);
+        }
+        else
+        {
+            oaiClient = GetTestProjectOpenAIClient().GetProjectResponsesClientForModel(TestEnvironment.FOUNDRY_MODEL_NAME);
+        }
+        CreateResponseOptions options = new()
+        {
+            InputItems = { ResponseItem.CreateUserMessageItem("Hello, tell me a joke.") },
+            StoredOutputEnabled = storeResponse
+        };
+        ResponseResult result = await oaiClient.CreateResponseAsync(options);
+        Assert.That(result.Error, Is.Null, $"Error code: {result.Error?.Code}, {result.Error?.Message}");
+        Assert.That(result.OutputItems, Has.Count.GreaterThan(0));
+        if (storeResponse)
+        {
+            result = await oaiClient.GetResponseAsync(result.Id);
+            Assert.That(result.Error, Is.Null, $"Error code: {result.Error?.Code}, {result.Error?.Message}");
+            Assert.That(result.OutputItems, Has.Count.GreaterThan(0));
+        }
+        else
+        {
+            try
+            {
+                await oaiClient.GetResponseAsync(result.Id);
+                Assert.Fail("Expected GetResponseAsync to fail when StoredOutputEnabled=false.");
+            }
+            catch (ClientResultException e)
+            {
+                Assert.That(e.Status, Is.EqualTo(404));
+            }
+        }
     }
 
     [TearDown]

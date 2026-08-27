@@ -21,7 +21,7 @@ namespace Azure.ResourceManager.Network.Models
         /// <summary> Initializes a new instance of <see cref="PublicIPAddressPropertiesFormat"/>. </summary>
         public PublicIPAddressPropertiesFormat()
         {
-            IpTags = new ChangeTrackingList<IPTag>();
+            IPTags = new ChangeTrackingList<IPTag>();
         }
 
         /// <summary> Initializes a new instance of <see cref="PublicIPAddressPropertiesFormat"/>. </summary>
@@ -41,16 +41,17 @@ namespace Azure.ResourceManager.Network.Models
         /// <param name="migrationPhase"> Migration phase of Public IP Address. </param>
         /// <param name="linkedPublicIPAddress"> The linked public IP address of the public IP address resource. </param>
         /// <param name="deleteOption"> Specify what happens to the public IP address when the VM using it is deleted. </param>
+        /// <param name="isUpgradedToV2"> Whether the public IP address SKU has been upgraded from Standard to StandardV2. </param>
         /// <param name="additionalBinaryDataProperties"> Keeps track of any properties unknown to the library. </param>
-        internal PublicIPAddressPropertiesFormat(NetworkIPAllocationMethod? publicIPAllocationMethod, NetworkIPVersion? publicIPAddressVersion, NetworkIPConfiguration ipConfiguration, PublicIPAddressDnsSettings dnsSettings, DdosSettings ddosSettings, IList<IPTag> ipTags, string ipAddress, NetworkSubResource publicIPPrefix, int? idleTimeoutInMinutes, Guid? resourceGuid, NetworkProvisioningState? provisioningState, PublicIPAddressData servicePublicIPAddress, NatGatewayData natGateway, PublicIPAddressMigrationPhase? migrationPhase, PublicIPAddressData linkedPublicIPAddress, IPAddressDeleteOption? deleteOption, IDictionary<string, BinaryData> additionalBinaryDataProperties)
+        internal PublicIPAddressPropertiesFormat(NetworkIPAllocationMethod? publicIPAllocationMethod, NetworkIPVersion? publicIPAddressVersion, NetworkIPConfiguration ipConfiguration, PublicIPAddressDnsSettings dnsSettings, DdosSettings ddosSettings, IList<IPTag> ipTags, string ipAddress, NetworkSubResource publicIPPrefix, int? idleTimeoutInMinutes, Guid? resourceGuid, NetworkProvisioningState? provisioningState, PublicIPAddressData servicePublicIPAddress, NatGatewayData natGateway, PublicIPAddressMigrationPhase? migrationPhase, PublicIPAddressData linkedPublicIPAddress, IPAddressDeleteOption? deleteOption, bool? isUpgradedToV2, IDictionary<string, BinaryData> additionalBinaryDataProperties)
         {
             PublicIPAllocationMethod = publicIPAllocationMethod;
             PublicIPAddressVersion = publicIPAddressVersion;
-            IpConfiguration = ipConfiguration;
+            IPConfiguration = ipConfiguration;
             DnsSettings = dnsSettings;
             DdosSettings = ddosSettings;
-            IpTags = ipTags;
-            IpAddress = ipAddress;
+            IPTags = ipTags;
+            IPAddress = ipAddress;
             PublicIPPrefix = publicIPPrefix;
             IdleTimeoutInMinutes = idleTimeoutInMinutes;
             ResourceGuid = resourceGuid;
@@ -60,6 +61,7 @@ namespace Azure.ResourceManager.Network.Models
             MigrationPhase = migrationPhase;
             LinkedPublicIPAddress = linkedPublicIPAddress;
             DeleteOption = deleteOption;
+            IsUpgradedToV2 = isUpgradedToV2;
             _additionalBinaryDataProperties = additionalBinaryDataProperties;
         }
 
@@ -73,7 +75,7 @@ namespace Azure.ResourceManager.Network.Models
 
         /// <summary> The IP configuration associated with the public IP address. </summary>
         [WirePath("ipConfiguration")]
-        public NetworkIPConfiguration IpConfiguration { get; }
+        public NetworkIPConfiguration IPConfiguration { get; }
 
         /// <summary> The FQDN of the DNS record associated with the public IP address. </summary>
         [WirePath("dnsSettings")]
@@ -85,11 +87,11 @@ namespace Azure.ResourceManager.Network.Models
 
         /// <summary> The list of tags associated with the public IP address. </summary>
         [WirePath("ipTags")]
-        public IList<IPTag> IpTags { get; } = new ChangeTrackingList<IPTag>();
+        public IList<IPTag> IPTags { get; } = new ChangeTrackingList<IPTag>();
 
         /// <summary> The IP address associated with the public IP address resource. </summary>
         [WirePath("ipAddress")]
-        public string IpAddress { get; set; }
+        public string IPAddress { get; set; }
 
         /// <summary> The Public IP Prefix this Public IP Address should be allocated from. </summary>
         [WirePath("publicIPPrefix")]
@@ -126,6 +128,10 @@ namespace Azure.ResourceManager.Network.Models
         /// <summary> Specify what happens to the public IP address when the VM using it is deleted. </summary>
         [WirePath("deleteOption")]
         public IPAddressDeleteOption? DeleteOption { get; set; }
+
+        /// <summary> Whether the public IP address SKU has been upgraded from Standard to StandardV2. </summary>
+        [WirePath("upgradedToV2")]
+        public bool? IsUpgradedToV2 { get; }
 
         /// <summary> Resource ID. </summary>
         [WirePath("publicIPPrefix.id")]

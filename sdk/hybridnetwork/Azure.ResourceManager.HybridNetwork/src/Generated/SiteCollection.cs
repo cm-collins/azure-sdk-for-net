@@ -41,7 +41,7 @@ namespace Azure.ResourceManager.HybridNetwork
         {
             TryGetApiVersion(SiteResource.ResourceType, out string siteApiVersion);
             _sitesClientDiagnostics = new ClientDiagnostics("Azure.ResourceManager.HybridNetwork", SiteResource.ResourceType.Namespace, Diagnostics);
-            _sitesRestClient = new Sites(_sitesClientDiagnostics, Pipeline, Endpoint, siteApiVersion ?? "2025-03-30");
+            _sitesRestClient = new Sites(_sitesClientDiagnostics, Pipeline, Diagnostics.ApplicationId, Endpoint, siteApiVersion ?? "2025-03-30");
             ValidateResourceId(id);
         }
 
@@ -94,7 +94,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _sitesRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, siteName, SiteData.ToRequestContent(data), context);
                 Response response = await Pipeline.ProcessMessageAsync(message, context).ConfigureAwait(false);
                 HybridNetworkArmOperation<SiteResource> operation = new HybridNetworkArmOperation<SiteResource>(
-                    new SiteOperationSource(Client),
+                    new SiteResourceOperationSource(Client),
                     _sitesClientDiagnostics,
                     Pipeline,
                     message.Request,
@@ -152,7 +152,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _sitesRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, siteName, SiteData.ToRequestContent(data), context);
                 Response response = Pipeline.ProcessMessage(message, context);
                 HybridNetworkArmOperation<SiteResource> operation = new HybridNetworkArmOperation<SiteResource>(
-                    new SiteOperationSource(Client),
+                    new SiteResourceOperationSource(Client),
                     _sitesClientDiagnostics,
                     Pipeline,
                     message.Request,

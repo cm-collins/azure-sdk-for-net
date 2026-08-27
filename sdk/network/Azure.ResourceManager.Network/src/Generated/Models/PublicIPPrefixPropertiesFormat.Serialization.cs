@@ -79,11 +79,11 @@ namespace Azure.ResourceManager.Network.Models
                 writer.WritePropertyName("publicIPAddressVersion"u8);
                 writer.WriteStringValue(PublicIPAddressVersion.Value.ToString());
             }
-            if (Optional.IsCollectionDefined(IpTags))
+            if (Optional.IsCollectionDefined(IPTags))
             {
                 writer.WritePropertyName("ipTags"u8);
                 writer.WriteStartArray();
-                foreach (IPTag item in IpTags)
+                foreach (IPTag item in IPTags)
                 {
                     writer.WriteObjectValue(item, options);
                 }
@@ -94,10 +94,10 @@ namespace Azure.ResourceManager.Network.Models
                 writer.WritePropertyName("prefixLength"u8);
                 writer.WriteNumberValue(PrefixLength.Value);
             }
-            if (options.Format != "W" && Optional.IsDefined(IpPrefix))
+            if (options.Format != "W" && Optional.IsDefined(IPPrefix))
             {
                 writer.WritePropertyName("ipPrefix"u8);
-                writer.WriteStringValue(IpPrefix);
+                writer.WriteStringValue(IPPrefix);
             }
             if (options.Format != "W" && Optional.IsCollectionDefined(PublicIPAddresses))
             {
@@ -109,10 +109,10 @@ namespace Azure.ResourceManager.Network.Models
                 }
                 writer.WriteEndArray();
             }
-            if (options.Format != "W" && Optional.IsDefined(LoadBalancerFrontendIpConfiguration))
+            if (options.Format != "W" && Optional.IsDefined(LoadBalancerFrontendIPConfiguration))
             {
                 writer.WritePropertyName("loadBalancerFrontendIpConfiguration"u8);
-                writer.WriteObjectValue(LoadBalancerFrontendIpConfiguration, options);
+                writer.WriteObjectValue(LoadBalancerFrontendIPConfiguration, options);
             }
             if (Optional.IsDefined(CustomIPPrefix))
             {
@@ -133,6 +133,11 @@ namespace Azure.ResourceManager.Network.Models
             {
                 writer.WritePropertyName("natGateway"u8);
                 writer.WriteObjectValue(NatGateway, options);
+            }
+            if (options.Format != "W" && Optional.IsDefined(IsUpgradedToV2))
+            {
+                writer.WritePropertyName("upgradedToV2"u8);
+                writer.WriteBooleanValue(IsUpgradedToV2.Value);
             }
             if (options.Format != "W" && _additionalBinaryDataProperties != null)
             {
@@ -181,11 +186,12 @@ namespace Azure.ResourceManager.Network.Models
             int? prefixLength = default;
             string ipPrefix = default;
             IReadOnlyList<ReferencedPublicIpAddress> publicIPAddresses = default;
-            NetworkSubResource loadBalancerFrontendIpConfiguration = default;
+            NetworkSubResource loadBalancerFrontendIPConfiguration = default;
             NetworkSubResource customIPPrefix = default;
             Guid? resourceGuid = default;
             NetworkProvisioningState? provisioningState = default;
             NatGatewayData natGateway = default;
+            bool? isUpgradedToV2 = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             foreach (var prop in element.EnumerateObject())
             {
@@ -246,7 +252,7 @@ namespace Azure.ResourceManager.Network.Models
                     {
                         continue;
                     }
-                    loadBalancerFrontendIpConfiguration = NetworkSubResource.DeserializeNetworkSubResource(prop.Value, options);
+                    loadBalancerFrontendIPConfiguration = NetworkSubResource.DeserializeNetworkSubResource(prop.Value, options);
                     continue;
                 }
                 if (prop.NameEquals("customIPPrefix"u8))
@@ -285,6 +291,15 @@ namespace Azure.ResourceManager.Network.Models
                     natGateway = NatGatewayData.DeserializeNatGatewayData(prop.Value, options);
                     continue;
                 }
+                if (prop.NameEquals("upgradedToV2"u8))
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    isUpgradedToV2 = prop.Value.GetBoolean();
+                    continue;
+                }
                 if (options.Format != "W")
                 {
                     additionalBinaryDataProperties.Add(prop.Name, BinaryData.FromString(prop.Value.GetRawText()));
@@ -296,11 +311,12 @@ namespace Azure.ResourceManager.Network.Models
                 prefixLength,
                 ipPrefix,
                 publicIPAddresses ?? new ChangeTrackingList<ReferencedPublicIpAddress>(),
-                loadBalancerFrontendIpConfiguration,
+                loadBalancerFrontendIPConfiguration,
                 customIPPrefix,
                 resourceGuid,
                 provisioningState,
                 natGateway,
+                isUpgradedToV2,
                 additionalBinaryDataProperties);
         }
     }

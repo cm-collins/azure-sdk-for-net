@@ -30,7 +30,7 @@ namespace Azure.ResourceManager.Network
         /// <param name="additionalBinaryDataProperties"> Keeps track of any properties unknown to the library. </param>
         /// <param name="properties"> Properties of the IpGroups. </param>
         /// <param name="eTag"> A unique read-only string that changes whenever the resource is updated. </param>
-        internal IPGroupData(ResourceIdentifier id, string name, string @type, AzureLocation? location, IDictionary<string, string> tags, IDictionary<string, BinaryData> additionalBinaryDataProperties, IpGroupPropertiesFormat properties, ETag? eTag) : base(id, name, @type, location, tags, additionalBinaryDataProperties)
+        internal IPGroupData(ResourceIdentifier id, string name, string @type, AzureLocation? location, IDictionary<string, string> tags, IDictionary<string, BinaryData> additionalBinaryDataProperties, IPGroupPropertiesFormat properties, ETag? eTag) : base(id, name, @type, location, tags, additionalBinaryDataProperties)
         {
             Properties = properties;
             ETag = eTag;
@@ -38,7 +38,7 @@ namespace Azure.ResourceManager.Network
 
         /// <summary> Properties of the IpGroups. </summary>
         [WirePath("properties")]
-        internal IpGroupPropertiesFormat Properties { get; set; }
+        internal IPGroupPropertiesFormat Properties { get; set; }
 
         /// <summary> A unique read-only string that changes whenever the resource is updated. </summary>
         [WirePath("etag")]
@@ -56,15 +56,15 @@ namespace Azure.ResourceManager.Network
 
         /// <summary> IpAddresses/IpAddressPrefixes in the IpGroups resource. </summary>
         [WirePath("properties.ipAddresses")]
-        public IList<string> IpAddresses
+        public IList<string> IPAddresses
         {
             get
             {
                 if (Properties is null)
                 {
-                    Properties = new IpGroupPropertiesFormat();
+                    Properties = new IPGroupPropertiesFormat();
                 }
-                return Properties.IpAddresses;
+                return Properties.IPAddresses;
             }
         }
     }

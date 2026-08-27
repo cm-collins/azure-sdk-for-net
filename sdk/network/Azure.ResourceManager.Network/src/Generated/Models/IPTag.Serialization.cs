@@ -9,6 +9,7 @@ using System;
 using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.Text.Json;
+using Azure.Core;
 using Azure.ResourceManager.Network;
 
 namespace Azure.ResourceManager.Network.Models
@@ -74,15 +75,20 @@ namespace Azure.ResourceManager.Network.Models
             {
                 throw new FormatException($"The model {nameof(IPTag)} does not support writing '{format}' format.");
             }
-            if (Optional.IsDefined(IpTagType))
+            if (Optional.IsDefined(IPTagType))
             {
                 writer.WritePropertyName("ipTagType"u8);
-                writer.WriteStringValue(IpTagType);
+                writer.WriteStringValue(IPTagType);
             }
             if (Optional.IsDefined(Tag))
             {
                 writer.WritePropertyName("tag"u8);
                 writer.WriteStringValue(Tag);
+            }
+            if (Optional.IsDefined(FirstPartyServiceTagId))
+            {
+                writer.WritePropertyName("firstPartyServiceTagId"u8);
+                writer.WriteStringValue(FirstPartyServiceTagId);
             }
             if (options.Format != "W" && _additionalBinaryDataProperties != null)
             {
@@ -128,6 +134,7 @@ namespace Azure.ResourceManager.Network.Models
             }
             string ipTagType = default;
             string tag = default;
+            ResourceIdentifier firstPartyServiceTagId = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
             foreach (var prop in element.EnumerateObject())
             {
@@ -141,12 +148,21 @@ namespace Azure.ResourceManager.Network.Models
                     tag = prop.Value.GetString();
                     continue;
                 }
+                if (prop.NameEquals("firstPartyServiceTagId"u8))
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    firstPartyServiceTagId = new ResourceIdentifier(prop.Value.GetString());
+                    continue;
+                }
                 if (options.Format != "W")
                 {
                     additionalBinaryDataProperties.Add(prop.Name, BinaryData.FromString(prop.Value.GetRawText()));
                 }
             }
-            return new IPTag(ipTagType, tag, additionalBinaryDataProperties);
+            return new IPTag(ipTagType, tag, firstPartyServiceTagId, additionalBinaryDataProperties);
         }
     }
 }

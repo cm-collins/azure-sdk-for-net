@@ -41,7 +41,7 @@ namespace Azure.ResourceManager.HybridNetwork
         {
             TryGetApiVersion(NetworkFunctionResource.ResourceType, out string networkFunctionApiVersion);
             _networkFunctionsClientDiagnostics = new ClientDiagnostics("Azure.ResourceManager.HybridNetwork", NetworkFunctionResource.ResourceType.Namespace, Diagnostics);
-            _networkFunctionsRestClient = new NetworkFunctions(_networkFunctionsClientDiagnostics, Pipeline, Endpoint, networkFunctionApiVersion ?? "2025-03-30");
+            _networkFunctionsRestClient = new NetworkFunctions(_networkFunctionsClientDiagnostics, Pipeline, Diagnostics.ApplicationId, Endpoint, networkFunctionApiVersion ?? "2025-03-30");
             ValidateResourceId(id);
         }
 
@@ -94,7 +94,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _networkFunctionsRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, networkFunctionName, NetworkFunctionData.ToRequestContent(data), context);
                 Response response = await Pipeline.ProcessMessageAsync(message, context).ConfigureAwait(false);
                 HybridNetworkArmOperation<NetworkFunctionResource> operation = new HybridNetworkArmOperation<NetworkFunctionResource>(
-                    new NetworkFunctionOperationSource(Client),
+                    new NetworkFunctionResourceOperationSource(Client),
                     _networkFunctionsClientDiagnostics,
                     Pipeline,
                     message.Request,
@@ -152,7 +152,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _networkFunctionsRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, networkFunctionName, NetworkFunctionData.ToRequestContent(data), context);
                 Response response = Pipeline.ProcessMessage(message, context);
                 HybridNetworkArmOperation<NetworkFunctionResource> operation = new HybridNetworkArmOperation<NetworkFunctionResource>(
-                    new NetworkFunctionOperationSource(Client),
+                    new NetworkFunctionResourceOperationSource(Client),
                     _networkFunctionsClientDiagnostics,
                     Pipeline,
                     message.Request,

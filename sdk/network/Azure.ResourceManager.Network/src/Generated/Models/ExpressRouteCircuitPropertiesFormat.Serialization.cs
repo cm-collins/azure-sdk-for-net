@@ -134,20 +134,35 @@ namespace Azure.ResourceManager.Network.Models
                 writer.WritePropertyName("bandwidthInGbps"u8);
                 writer.WriteNumberValue(BandwidthInGbps.Value);
             }
-            if (options.Format != "W" && Optional.IsDefined(Stag))
+            if (options.Format != "W" && Optional.IsDefined(STag))
             {
                 writer.WritePropertyName("stag"u8);
-                writer.WriteNumberValue(Stag.Value);
+                writer.WriteNumberValue(STag.Value);
+            }
+            if (options.Format != "W" && Optional.IsDefined(ResiliencyLevel))
+            {
+                writer.WritePropertyName("resiliencyLevel"u8);
+                writer.WriteStringValue(ResiliencyLevel.Value.ToString());
+            }
+            if (Optional.IsDefined(PartnerAccountId))
+            {
+                writer.WritePropertyName("partnerAccountId"u8);
+                writer.WriteStringValue(PartnerAccountId);
+            }
+            if (Optional.IsDefined(ActivationKey))
+            {
+                writer.WritePropertyName("activationKey"u8);
+                writer.WriteStringValue(ActivationKey);
             }
             if (options.Format != "W" && Optional.IsDefined(ProvisioningState))
             {
                 writer.WritePropertyName("provisioningState"u8);
                 writer.WriteStringValue(ProvisioningState.Value.ToString());
             }
-            if (Optional.IsDefined(GatewayManagerEtag))
+            if (Optional.IsDefined(GatewayManagerETag))
             {
                 writer.WritePropertyName("gatewayManagerEtag"u8);
-                writer.WriteStringValue(GatewayManagerEtag);
+                writer.WriteStringValue(GatewayManagerETag);
             }
             if (Optional.IsDefined(GlobalReachEnabled))
             {
@@ -221,9 +236,12 @@ namespace Azure.ResourceManager.Network.Models
             ExpressRouteCircuitServiceProviderProperties serviceProviderProperties = default;
             NetworkSubResource expressRoutePort = default;
             float? bandwidthInGbps = default;
-            int? stag = default;
+            int? sTag = default;
+            ExpressRouteCircuitResiliencyLevel? resiliencyLevel = default;
+            string partnerAccountId = default;
+            string activationKey = default;
             NetworkProvisioningState? provisioningState = default;
-            string gatewayManagerEtag = default;
+            string gatewayManagerETag = default;
             bool? globalReachEnabled = default;
             string authorizationKey = default;
             string authorizationStatus = default;
@@ -325,7 +343,26 @@ namespace Azure.ResourceManager.Network.Models
                     {
                         continue;
                     }
-                    stag = prop.Value.GetInt32();
+                    sTag = prop.Value.GetInt32();
+                    continue;
+                }
+                if (prop.NameEquals("resiliencyLevel"u8))
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    resiliencyLevel = new ExpressRouteCircuitResiliencyLevel(prop.Value.GetString());
+                    continue;
+                }
+                if (prop.NameEquals("partnerAccountId"u8))
+                {
+                    partnerAccountId = prop.Value.GetString();
+                    continue;
+                }
+                if (prop.NameEquals("activationKey"u8))
+                {
+                    activationKey = prop.Value.GetString();
                     continue;
                 }
                 if (prop.NameEquals("provisioningState"u8))
@@ -339,7 +376,7 @@ namespace Azure.ResourceManager.Network.Models
                 }
                 if (prop.NameEquals("gatewayManagerEtag"u8))
                 {
-                    gatewayManagerEtag = prop.Value.GetString();
+                    gatewayManagerETag = prop.Value.GetString();
                     continue;
                 }
                 if (prop.NameEquals("globalReachEnabled"u8))
@@ -386,9 +423,12 @@ namespace Azure.ResourceManager.Network.Models
                 serviceProviderProperties,
                 expressRoutePort,
                 bandwidthInGbps,
-                stag,
+                sTag,
+                resiliencyLevel,
+                partnerAccountId,
+                activationKey,
                 provisioningState,
-                gatewayManagerEtag,
+                gatewayManagerETag,
                 globalReachEnabled,
                 authorizationKey,
                 authorizationStatus,

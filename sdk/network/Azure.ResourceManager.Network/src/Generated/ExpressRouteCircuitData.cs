@@ -206,11 +206,57 @@ namespace Azure.ResourceManager.Network
 
         /// <summary> The identifier of the circuit traffic. Outer tag for QinQ encapsulation. </summary>
         [WirePath("properties.stag")]
-        public int? Stag
+        public int? STag
         {
             get
             {
-                return Properties is null ? default : Properties.Stag;
+                return Properties is null ? default : Properties.STag;
+            }
+        }
+
+        /// <summary> The resiliency level of the ExpressRoute circuit. </summary>
+        [WirePath("properties.resiliencyLevel")]
+        public ExpressRouteCircuitResiliencyLevel? ResiliencyLevel
+        {
+            get
+            {
+                return Properties is null ? default : Properties.ResiliencyLevel;
+            }
+        }
+
+        /// <summary> Account ID of customer account on partner cloud provider. </summary>
+        [WirePath("properties.partnerAccountId")]
+        public string PartnerAccountId
+        {
+            get
+            {
+                return Properties is null ? default : Properties.PartnerAccountId;
+            }
+            set
+            {
+                if (Properties is null)
+                {
+                    Properties = new ExpressRouteCircuitPropertiesFormat();
+                }
+                Properties.PartnerAccountId = value;
+            }
+        }
+
+        /// <summary> Activation Key from partner cloud provider. </summary>
+        [WirePath("properties.activationKey")]
+        public string ActivationKey
+        {
+            get
+            {
+                return Properties is null ? default : Properties.ActivationKey;
+            }
+            set
+            {
+                if (Properties is null)
+                {
+                    Properties = new ExpressRouteCircuitPropertiesFormat();
+                }
+                Properties.ActivationKey = value;
             }
         }
 
@@ -226,11 +272,11 @@ namespace Azure.ResourceManager.Network
 
         /// <summary> The GatewayManager Etag. </summary>
         [WirePath("properties.gatewayManagerEtag")]
-        public string GatewayManagerEtag
+        public string GatewayManagerETag
         {
             get
             {
-                return Properties is null ? default : Properties.GatewayManagerEtag;
+                return Properties is null ? default : Properties.GatewayManagerETag;
             }
             set
             {
@@ -238,7 +284,7 @@ namespace Azure.ResourceManager.Network
                 {
                     Properties = new ExpressRouteCircuitPropertiesFormat();
                 }
-                Properties.GatewayManagerEtag = value;
+                Properties.GatewayManagerETag = value;
             }
         }
 

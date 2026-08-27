@@ -79,6 +79,16 @@ namespace Azure.ResourceManager.Network
             }
         }
 
+        /// <summary> Address Prefix for Dual-Stack NVAs. </summary>
+        [WirePath("properties.addressPrefixV6")]
+        public string AddressPrefixV6
+        {
+            get
+            {
+                return Properties is null ? default : Properties.AddressPrefixV6;
+            }
+        }
+
         /// <summary> BootStrapConfigurationBlobs storage URLs. </summary>
         [WirePath("properties.bootStrapConfigurationBlobs")]
         public IList<string> BootStrapConfigurationBlobs
@@ -189,20 +199,6 @@ namespace Azure.ResourceManager.Network
             }
         }
 
-        /// <summary> List of Resource Uri of Public IPs for Internet Ingress Scenario. </summary>
-        [WirePath("properties.internetIngressPublicIps")]
-        public IList<InternetIngressPublicIpsProperties> InternetIngressPublicIps
-        {
-            get
-            {
-                if (Properties is null)
-                {
-                    Properties = new NetworkVirtualAppliancePropertiesFormat();
-                }
-                return Properties.InternetIngressPublicIps;
-            }
-        }
-
         /// <summary> The provisioning state of the resource. </summary>
         [WirePath("properties.provisioningState")]
         public NetworkProvisioningState? ProvisioningState
@@ -273,13 +269,37 @@ namespace Azure.ResourceManager.Network
             }
         }
 
-        /// <summary> A Internal Load Balancer's HA port frontend IP address. Can be used to set routes &amp; UDR to load balance traffic between NVA instances. </summary>
-        [WirePath("properties.privateIpAddress")]
-        public string PrivateIpAddress
+        /// <summary> The address families to deploy the NVA in. ["IPv4", "IPv6"] deploys a dual-stack NVA (the vHub/VNet must also be dual-stack). ["IPv4"], an empty array, or omitting the field deploys an IPv4-only NVA. The value "IPv6" may only appear in combination with "IPv4"; standalone ["IPv6"] is reserved for future use and is rejected by the service today. </summary>
+        [WirePath("properties.addressFamily")]
+        public IList<NetworkIPVersion> AddressFamily
         {
             get
             {
-                return Properties is null ? default : Properties.PrivateIpAddress;
+                if (Properties is null)
+                {
+                    Properties = new NetworkVirtualAppliancePropertiesFormat();
+                }
+                return Properties.AddressFamily;
+            }
+        }
+
+        /// <summary> An Internal Load Balancer's HA port frontend IPv6 address. Can be used to set routes &amp; UDR to load balance traffic between NVA instances. This field appears in dual-stack NVAs. </summary>
+        [WirePath("properties.privateIpAddressV6")]
+        public string PrivateIPAddressV6
+        {
+            get
+            {
+                return Properties is null ? default : Properties.PrivateIPAddressV6;
+            }
+        }
+
+        /// <summary> The migration status of the Network Virtual Appliance. </summary>
+        [WirePath("properties.migrationStatus")]
+        public NetworkVirtualApplianceMigrationStatus MigrationStatus
+        {
+            get
+            {
+                return Properties is null ? default : Properties.MigrationStatus;
             }
         }
 

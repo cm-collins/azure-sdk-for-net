@@ -52,9 +52,9 @@ namespace Azure.ResourceManager.ManagedNetworkFabric
                 {
                     yield break;
                 }
-                IpPrefixesListResult result = IpPrefixesListResult.FromResponse(response);
-                yield return Page<NetworkFabricIPPrefixData>.FromValues((IReadOnlyList<NetworkFabricIPPrefixData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
+                IPPrefixesListResult result = IPPrefixesListResult.FromResponse(response);
                 nextPage = result.NextLink;
+                yield return Page<NetworkFabricIPPrefixData>.FromValues((IReadOnlyList<NetworkFabricIPPrefixData>)result.Value, nextPage?.IsAbsoluteUri == true ? nextPage.AbsoluteUri : nextPage?.OriginalString, response);
                 if (nextPage == null)
                 {
                     yield break;

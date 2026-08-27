@@ -102,11 +102,11 @@ namespace Azure.ResourceManager.Network
 
         /// <summary> The IP configuration associated with the public IP address. </summary>
         [WirePath("properties.ipConfiguration")]
-        public NetworkIPConfiguration IpConfiguration
+        public NetworkIPConfiguration IPConfiguration
         {
             get
             {
-                return Properties is null ? default : Properties.IpConfiguration;
+                return Properties is null ? default : Properties.IPConfiguration;
             }
         }
 
@@ -148,7 +148,7 @@ namespace Azure.ResourceManager.Network
 
         /// <summary> The list of tags associated with the public IP address. </summary>
         [WirePath("properties.ipTags")]
-        public IList<IPTag> IpTags
+        public IList<IPTag> IPTags
         {
             get
             {
@@ -156,17 +156,17 @@ namespace Azure.ResourceManager.Network
                 {
                     Properties = new PublicIPAddressPropertiesFormat();
                 }
-                return Properties.IpTags;
+                return Properties.IPTags;
             }
         }
 
         /// <summary> The IP address associated with the public IP address resource. </summary>
         [WirePath("properties.ipAddress")]
-        public string IpAddress
+        public string IPAddress
         {
             get
             {
-                return Properties is null ? default : Properties.IpAddress;
+                return Properties is null ? default : Properties.IPAddress;
             }
             set
             {
@@ -174,7 +174,7 @@ namespace Azure.ResourceManager.Network
                 {
                     Properties = new PublicIPAddressPropertiesFormat();
                 }
-                Properties.IpAddress = value;
+                Properties.IPAddress = value;
             }
         }
 
@@ -293,6 +293,16 @@ namespace Azure.ResourceManager.Network
                     Properties = new PublicIPAddressPropertiesFormat();
                 }
                 Properties.DeleteOption = value;
+            }
+        }
+
+        /// <summary> Whether the public IP address SKU has been upgraded from Standard to StandardV2. </summary>
+        [WirePath("properties.upgradedToV2")]
+        public bool? IsUpgradedToV2
+        {
+            get
+            {
+                return Properties is null ? default : Properties.IsUpgradedToV2;
             }
         }
 

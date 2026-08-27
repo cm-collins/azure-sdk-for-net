@@ -94,11 +94,11 @@ namespace Azure.ResourceManager.Network.Models
                 }
                 writer.WriteEndArray();
             }
-            if (options.Format != "W" && Optional.IsCollectionDefined(Ipv6Peerings))
+            if (options.Format != "W" && Optional.IsCollectionDefined(IPv6Peerings))
             {
                 writer.WritePropertyName("ipv6Peerings"u8);
                 writer.WriteStartArray();
-                foreach (ExpressRouteCircuitPeeringData item in Ipv6Peerings)
+                foreach (ExpressRouteCircuitPeeringData item in IPv6Peerings)
                 {
                     writer.WriteObjectValue(item, options);
                 }

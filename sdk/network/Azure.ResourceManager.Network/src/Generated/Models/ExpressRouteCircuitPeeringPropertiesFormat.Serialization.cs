@@ -140,10 +140,10 @@ namespace Azure.ResourceManager.Network.Models
                 writer.WritePropertyName("provisioningState"u8);
                 writer.WriteStringValue(ProvisioningState.Value.ToString());
             }
-            if (Optional.IsDefined(GatewayManagerEtag))
+            if (Optional.IsDefined(GatewayManagerETag))
             {
                 writer.WritePropertyName("gatewayManagerEtag"u8);
-                writer.WriteStringValue(GatewayManagerEtag);
+                writer.WriteStringValue(GatewayManagerETag);
             }
             if (options.Format != "W" && Optional.IsDefined(LastModifiedBy))
             {
@@ -155,10 +155,10 @@ namespace Azure.ResourceManager.Network.Models
                 writer.WritePropertyName("routeFilter"u8);
                 writer.WriteObjectValue(RouteFilter, options);
             }
-            if (Optional.IsDefined(Ipv6PeeringConfig))
+            if (Optional.IsDefined(IPv6PeeringConfig))
             {
                 writer.WritePropertyName("ipv6PeeringConfig"u8);
-                writer.WriteObjectValue(Ipv6PeeringConfig, options);
+                writer.WriteObjectValue(IPv6PeeringConfig, options);
             }
             if (Optional.IsDefined(ExpressRouteConnection))
             {
@@ -240,7 +240,7 @@ namespace Azure.ResourceManager.Network.Models
             ExpressRouteCircuitPeeringConfig microsoftPeeringConfig = default;
             ExpressRouteCircuitStats stats = default;
             NetworkProvisioningState? provisioningState = default;
-            string gatewayManagerEtag = default;
+            string gatewayManagerETag = default;
             string lastModifiedBy = default;
             NetworkSubResource routeFilter = default;
             IPv6ExpressRouteCircuitPeeringConfig ipv6PeeringConfig = default;
@@ -349,7 +349,7 @@ namespace Azure.ResourceManager.Network.Models
                 }
                 if (prop.NameEquals("gatewayManagerEtag"u8))
                 {
-                    gatewayManagerEtag = prop.Value.GetString();
+                    gatewayManagerETag = prop.Value.GetString();
                     continue;
                 }
                 if (prop.NameEquals("lastModifiedBy"u8))
@@ -431,7 +431,7 @@ namespace Azure.ResourceManager.Network.Models
                 microsoftPeeringConfig,
                 stats,
                 provisioningState,
-                gatewayManagerEtag,
+                gatewayManagerETag,
                 lastModifiedBy,
                 routeFilter,
                 ipv6PeeringConfig,

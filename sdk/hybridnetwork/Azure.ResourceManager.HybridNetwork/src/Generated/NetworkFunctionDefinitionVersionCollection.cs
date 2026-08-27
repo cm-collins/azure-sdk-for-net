@@ -40,7 +40,7 @@ namespace Azure.ResourceManager.HybridNetwork
         {
             TryGetApiVersion(NetworkFunctionDefinitionVersionResource.ResourceType, out string networkFunctionDefinitionVersionApiVersion);
             _networkFunctionDefinitionVersionsClientDiagnostics = new ClientDiagnostics("Azure.ResourceManager.HybridNetwork", NetworkFunctionDefinitionVersionResource.ResourceType.Namespace, Diagnostics);
-            _networkFunctionDefinitionVersionsRestClient = new NetworkFunctionDefinitionVersions(_networkFunctionDefinitionVersionsClientDiagnostics, Pipeline, Endpoint, networkFunctionDefinitionVersionApiVersion ?? "2025-03-30");
+            _networkFunctionDefinitionVersionsRestClient = new NetworkFunctionDefinitionVersions(_networkFunctionDefinitionVersionsClientDiagnostics, Pipeline, Diagnostics.ApplicationId, Endpoint, networkFunctionDefinitionVersionApiVersion ?? "2025-03-30");
             ValidateResourceId(id);
         }
 
@@ -93,7 +93,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _networkFunctionDefinitionVersionsRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, networkFunctionDefinitionVersionName, NetworkFunctionDefinitionVersionData.ToRequestContent(data), context);
                 Response response = await Pipeline.ProcessMessageAsync(message, context).ConfigureAwait(false);
                 HybridNetworkArmOperation<NetworkFunctionDefinitionVersionResource> operation = new HybridNetworkArmOperation<NetworkFunctionDefinitionVersionResource>(
-                    new NetworkFunctionDefinitionVersionOperationSource(Client),
+                    new NetworkFunctionDefinitionVersionResourceOperationSource(Client),
                     _networkFunctionDefinitionVersionsClientDiagnostics,
                     Pipeline,
                     message.Request,
@@ -151,7 +151,7 @@ namespace Azure.ResourceManager.HybridNetwork
                 HttpMessage message = _networkFunctionDefinitionVersionsRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, networkFunctionDefinitionVersionName, NetworkFunctionDefinitionVersionData.ToRequestContent(data), context);
                 Response response = Pipeline.ProcessMessage(message, context);
                 HybridNetworkArmOperation<NetworkFunctionDefinitionVersionResource> operation = new HybridNetworkArmOperation<NetworkFunctionDefinitionVersionResource>(
-                    new NetworkFunctionDefinitionVersionOperationSource(Client),
+                    new NetworkFunctionDefinitionVersionResourceOperationSource(Client),
                     _networkFunctionDefinitionVersionsClientDiagnostics,
                     Pipeline,
                     message.Request,
