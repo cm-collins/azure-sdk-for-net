@@ -43,11 +43,12 @@
 		"GitHub.vscode-pull-request-github",
 		"MS-vsliveshare.vsliveshare",
 		"VisualStudioExptTeam.vscodeintellicode"
-	]
+	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "uname -a"
+	"postCreateCommand": "gh extension install github/gh-aw || echo '⚠️  gh-aw extension install failed — run it manually'"
 }
